@@ -118,8 +118,9 @@ const FallingCoinsLoader: React.FC = () => {
       Matter.World.clear(world, false);
       Matter.Engine.clear(engine);
       render.canvas.remove();
-      render.canvas = null;
-      render.context = null;
+      // Create a new canvas element instead of setting to null
+      render.canvas = document.createElement("canvas");
+      render.context = render.canvas.getContext("2d")!;
       render.textures = {};
     };
   }, []);
@@ -158,7 +159,15 @@ const FallingCoinsLoader: React.FC = () => {
         }
       );
 
-      Matter.World.add(engineRef.current.world, newCoin);
+      // Add random initial velocity
+      Matter.Body.setVelocity(newCoin, {
+        x: (Math.random() - 0.5) * 5, // Random x velocity between -2.5 and 2.5
+        y: Math.random() * 2, // Random downward velocity between 0 and 2
+      });
+
+      if (engineRef.current) {
+        Matter.World.add(engineRef.current.world, newCoin);
+      }
       setCoins((prevCoins) => [...prevCoins, newCoin]);
     }, ADD_COIN_INTERVAL);
 
@@ -171,7 +180,7 @@ const FallingCoinsLoader: React.FC = () => {
       clearInterval(interval);
       clearTimeout(timeoutId);
     };
-  }, [coins, engineRef.current]);
+  }, [coins]);
 
   return (
     <div ref={sceneRef} className="fixed inset-0 z-50">
