@@ -7,7 +7,7 @@
     "dev:db:migrate": "dotenv -e .env.local -- drizzle-kit migrate",
     "dev:db:generate": "dotenv -e .env.local -- drizzle-kit generate",
     "dev:db:studio": "dotenv -e .env.local -- drizzle-kit studio",
-    "build": "npm run dev:db:migrate && next build",
+    "build": "drizzle-kit migrate && next build",
     "start": "next start",
     "format": "prettier --check . --ignore-path ./.gitignore --ignore-path ./.prettierignore",
     "lint": "next lint",
