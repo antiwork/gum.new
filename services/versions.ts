@@ -10,13 +10,9 @@ export interface CreateVersionInput {
   parentId: string;
 }
 
-export interface CreateVersionOutput {
-  version: Version;
-}
-
 export async function createVersion(
   input: CreateVersionInput
-): Promise<CreateVersionOutput> {
+): Promise<Version> {
   const [version] = await db
     .insert(schema.versions)
     .values({
@@ -31,5 +27,57 @@ export async function createVersion(
     throw new Error("Failed to create version");
   }
 
-  return { version };
+  return version;
+}
+
+export interface GetParentVersionInput {
+  versionId: string;
+}
+
+export async function getParentVersion(
+  input: GetParentVersionInput
+): Promise<Version | null> {
+  const version = await db.query.versions.findFirst({
+    where: (versions, { eq }) => eq(versions.id, input.versionId),
+  });
+
+  if (!version?.parentId) {
+    return null;
+  }
+
+  const parentVersion = await db.query.versions.findFirst({
+    where: (versions, { eq }) => eq(versions.id, version.parentId ?? ""),
+  });
+
+  return parentVersion ?? null;
+}
+
+export interface GetLatestVersionInput {
+  gumId: string;
+}
+
+export async function getLatestVersion(
+  input: GetLatestVersionInput
+): Promise<Version | null> {
+  const version = await db.query.versions.findFirst({
+    where: (versions, { eq }) => eq(versions.gumId, input.gumId),
+    orderBy: (versions, { desc }) => [desc(versions.id)],
+  });
+
+  return version ?? null;
+}
+
+export interface GetLatestChildVersionInput {
+  versionId: string;
+}
+
+export async function getLatestChildVersion(
+  input: GetLatestChildVersionInput
+): Promise<Version | null> {
+  const version = await db.query.versions.findFirst({
+    where: (versions, { eq }) => eq(versions.parentId, input.versionId),
+    orderBy: (versions, { desc }) => [desc(versions.id)],
+  });
+
+  return version ?? null;
 }
