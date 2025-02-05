@@ -5,14 +5,15 @@ import { useEffect, useRef, useState } from "react";
 import Matter from "matter-js";
 
 const COIN_SIZE = 100;
-const COIN_MARGIN = 2;
 const ADD_COIN_INTERVAL = 50; // Reduced from 100 to 50 to add coins faster
+const LOADING_DURATION = 10000; // 10 seconds
 
 const FallingCoinsLoader: React.FC = () => {
   const sceneRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<Matter.Engine | null>(null);
   const [coins, setCoins] = useState<Matter.Body[]>([]);
   const textureRef = useRef<HTMLImageElement | null>(null);
+  const wallsRef = useRef<Matter.Body[]>([]);
 
   useEffect(() => {
     if (!sceneRef.current) return;
@@ -83,6 +84,7 @@ const FallingCoinsLoader: React.FC = () => {
       ),
     ];
 
+    wallsRef.current = walls;
     Matter.World.add(world, walls);
 
     // add mouse control
@@ -103,6 +105,13 @@ const FallingCoinsLoader: React.FC = () => {
     render.mouse = mouse;
 
     engineRef.current = engine;
+
+    // Remove floor after loading duration
+    setTimeout(() => {
+      if (engineRef.current && wallsRef.current) {
+        Matter.World.remove(engineRef.current.world, wallsRef.current[0]); // Remove only the floor
+      }
+    }, LOADING_DURATION);
 
     return () => {
       Matter.Render.stop(render);
@@ -153,7 +162,15 @@ const FallingCoinsLoader: React.FC = () => {
       setCoins((prevCoins) => [...prevCoins, newCoin]);
     }, ADD_COIN_INTERVAL);
 
-    return () => clearInterval(interval);
+    // Clear interval after loading duration
+    const timeoutId = setTimeout(() => {
+      clearInterval(interval);
+    }, LOADING_DURATION);
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timeoutId);
+    };
   }, [coins, engineRef.current]);
 
   return (
