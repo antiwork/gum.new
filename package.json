@@ -39,6 +39,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4.0.0",
+    "@types/matter-js": "^0.19.8",
     "@types/node": "^20",
     "@types/pg": "^8.11.11",
     "@types/react": "^19",
