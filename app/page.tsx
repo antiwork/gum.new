@@ -83,19 +83,19 @@ export default function Home() {
     switch (style) {
       case "neobrutalist":
         return {
-          form: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 text-6xl font-bold p-8 w-[61%] leading-2 text-black dark:text-white",
+          form: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 text-6xl font-bold p-8 w-[61%] leading-2 text-black dark:text-white font-['Helvetica Neue',Helvetica,Arial,sans-serif]",
           select:
-            "rounded-full border-2 border-black dark:border-white mx-[18px] py-2 px-6 text-6xl inline-block",
+            "rounded-full border-2 border-black dark:text-black dark:border-white mx-[18px] py-2 px-6 text-6xl inline-block",
           button:
             "text-6xl p-8 rounded-full border-2 border-black dark:border-white bg-black dark:bg-white text-white dark:text-black hover:bg-white hover:text-black dark:hover:bg-black dark:hover:text-white transition-colors w-full max-w-[120px] cursor-pointer",
           createButton:
-            "text-5xl p-8 w-full rounded-full border-2 border-black dark:border-white bg-black dark:bg-white text-white dark:text-black hover:bg-white hover:text-black dark:hover:bg-black dark:hover:text-white transition-colors cursor-pointer",
+            "text-5xl mt-20 p-8 w-full rounded-full border-2 border-black dark:border-white bg-black dark:bg-black text-white dark:text-white hover:bg-white hover:text-black dark:hover:bg-white dark:hover:text-black transition-colors cursor-pointer",
           input:
-            "text-6xl rounded-full border-2 border-black dark:border-white py-0 px-6 inline-block mx-[18px]",
+            "text-6xl rounded-full border-2 dark:text-black dark:border-white border-black dark:border-white py-0 px-6 inline-block mx-[18px]",
         };
       case "minimalist":
         return {
-          form: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 text-6xl font-light p-12 w-[61%] bg-white/80 dark:bg-black/80 backdrop-blur-sm text-black dark:text-white",
+          form: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 text-6xl font-light p-12 w-[61%] bg-white/80 dark:bg-black/80 backdrop-blur-sm text-black dark:text-white font-['Helvetica Neue',Helvetica,Arial,sans-serif]",
           select:
             "rounded-sm border border-gray-200 dark:border-gray-700 mx-[18px] py-2 px-4 text-6xl shadow-sm inline-block",
           button:
@@ -107,7 +107,7 @@ export default function Home() {
         };
       case "playful":
         return {
-          form: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 gap-8 text-6xl font-bold p-10 w-[61%] rotate-1 text-black dark:text-white",
+          form: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 gap-8 text-6xl font-bold p-10 w-[61%] rotate-1 text-black dark:text-white font-['Comic Sans MS',cursive]",
           select:
             "rounded-xl border-4 border-dashed border-purple-500 p-8 px-6 text-6xl bg-yellow-100 dark:bg-yellow-900 shadow-lg transform hover:rotate-1 transition-transform inline-block mx-[18px]",
           button:
@@ -119,7 +119,7 @@ export default function Home() {
         };
       case "corporate":
         return {
-          form: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 gap-5 text-6xl font-semibold p-10 w-[61%] bg-gray-50 dark:bg-gray-900 text-black dark:text-white",
+          form: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 gap-5 text-6xl font-semibold p-10 w-[61%] bg-gray-50 dark:bg-gray-900 text-black dark:text-white font-['Georgia',serif]",
           select:
             "rounded-md border border-gray-300 dark:border-gray-700 p-7 px-5 text-6xl bg-white dark:bg-gray-800 shadow-md inline-block mx-[18px]",
           button:
@@ -131,7 +131,7 @@ export default function Home() {
         };
       case "retro":
         return {
-          form: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 text-6xl font-bold p-10 w-[61%] bg-amber-100 dark:bg-amber-900 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] text-black dark:text-white",
+          form: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 text-6xl font-bold p-10 w-[61%] bg-amber-100 dark:bg-amber-900 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] text-black dark:text-white font-['Courier New',monospace]",
           select:
             "rounded-none border-2 border-black dark:border-white p-8 px-6 text-6xl bg-orange-200 dark:bg-orange-800 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] inline-block mx-[18px]",
           button:
@@ -143,7 +143,7 @@ export default function Home() {
         };
       default:
         return {
-          form: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 text-6xl font-bold p-8 w-[61%] text-black dark:text-white",
+          form: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 text-6xl font-bold p-8 w-[61%] text-black dark:text-white font-['Helvetica Neue',Helvetica,Arial,sans-serif]",
           select:
             "rounded-full border-2 border-black dark:border-white p-8 px-6 text-6xl inline-block mx-[18px]",
           button:
@@ -165,7 +165,15 @@ export default function Home() {
         className="w-full h-screen p-4 text-lg font-normal absolute top-0 left-0"
         dangerouslySetInnerHTML={{ __html: landingPage }}
       />
-
+      <h1 className="text-4xl font-bold z-11 absolute top-4 left-4 flex items-center">
+        <div className="mt-[3px]">GUM</div>
+        <span
+          className="ml-2 text-white dark:text-black dark:bg-white rounded-full px-2"
+          style={{ backgroundColor: "rgb(255, 144, 232)" }}
+        >
+          .new
+        </span>
+      </h1>
       <form
         onSubmit={handleSubmit}
         className={styleClasses.form}
