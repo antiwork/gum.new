@@ -89,7 +89,7 @@ export default function Home() {
           button:
             "text-6xl p-8 rounded-full border-2 border-black bg-black text-white hover:bg-white hover:text-black transition-colors w-full max-w-[120px]",
           createButton:
-            "text-5xl p-8 rounded-full border-2 border-black bg-black text-white hover:bg-white hover:text-black transition-colors mt-4",
+            "text-5xl p-8 w-full rounded-full border-2 border-black bg-black text-white hover:bg-white hover:text-black transition-colors",
           input:
             "text-6xl rounded-full border-2 border-black py-0 px-6 inline-block mx-[18px]",
         };
