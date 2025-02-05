@@ -36,7 +36,6 @@ export async function POST(req: Request) {
 
   let landingPage = "";
   for await (const partialObject of partialObjectStream) {
-    console.clear();
     console.log(partialObject);
     landingPage = partialObject.landingPage;
   }
