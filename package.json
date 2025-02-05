@@ -3,10 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
+    "dev": "next dev --turbo",
+    "dev:db:migrate": "dotenv -e .env.local -- drizzle-kit migrate",
+    "dev:db:generate": "dotenv -e .env.local -- drizzle-kit generate",
+    "dev:db:studio": "dotenv -e .env.local -- drizzle-kit studio",
+    "build": "drizzle-kit migrate && next build",
     "start": "next start",
-    "lint": "next lint"
+    "format": "prettier --check . --ignore-path ./.gitignore --ignore-path ./.prettierignore",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit --incremental"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^1.1.6",
@@ -16,8 +21,11 @@
     "ai": "^4.1.20",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "cuid": "^3.0.0",
+    "drizzle-orm": "^0.39.1",
     "lucide-react": "^0.474.0",
     "next": "15.1.6",
+    "pg": "^8.13.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^3.0.1",
@@ -28,12 +36,16 @@
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4.0.0",
     "@types/node": "^20",
+    "@types/pg": "^8.11.11",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv-cli": "^8.0.0",
+    "drizzle-kit": "^0.30.4",
     "eslint": "^9",
     "eslint-config-next": "15.1.6",
     "postcss": "^8",
-    "tailwindcss": "^4.0.0",
+    "tailwindcss": "^4.0.3",
     "typescript": "^5"
-  }
+  },
+  "packageManager": "pnpm@9.9.0+sha512.60c18acd138bff695d339be6ad13f7e936eea6745660d4cc4a776d5247c540d0edee1a563695c183a66eb917ef88f2b4feb1fc25f32a7adcadc7aaf3438e99c1"
 }
