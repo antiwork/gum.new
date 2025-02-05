@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
-import Image from "next/image";
+
 export default function Home() {
   const [style, setStyle] = useState("neobrutalist");
   const [purpose, setPurpose] = useState("sell a digital product");
@@ -97,61 +97,61 @@ export default function Home() {
         return {
           form: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 text-6xl font-light p-12 w-[61%] bg-white/80 dark:bg-black/80 backdrop-blur-sm text-black dark:text-white font-['Helvetica Neue',Helvetica,Arial,sans-serif]",
           select:
-            "rounded-sm border border-gray-200 dark:border-gray-700 mx-[18px] py-2 px-4 text-6xl shadow-sm inline-block",
+            "rounded-sm border border-gray-200 dark:text-gray-700 dark:border-gray-700 mx-[18px] py-2 px-4 text-6xl shadow-sm inline-block text-black bg-white dark:bg-black",
           button:
-            "text-4xl p-6 rounded-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-black text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors w-full max-w-[120px] shadow-sm cursor-pointer",
+            "text-4xl p-6 rounded-sm border border-gray-200 dark:text-gray-700 dark:border-gray-700 bg-white dark:bg-black text-black hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors w-full max-w-[120px] shadow-sm cursor-pointer",
           createButton:
-            "text-4xl p-6 rounded-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-black text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors w-full mt-4 shadow-sm cursor-pointer",
+            "text-4xl p-6 rounded-sm border border-gray-200 dark:text-gray-700 dark:border-gray-700 bg-white dark:bg-black text-black dark:text-white hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors w-full mt-4 shadow-sm cursor-pointer",
           input:
-            "text-4xl rounded-sm border border-gray-200 dark:border-gray-700 py-2 px-4 shadow-sm inline-block mx-[18px]",
+            "text-4xl rounded-sm border border-gray-200 dark:text-gray-700 dark:border-gray-700 py-2 px-4 shadow-sm inline-block mx-[18px] text-black bg-white dark:bg-black",
         };
       case "playful":
         return {
           form: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 gap-8 text-6xl font-bold p-10 w-[61%] rotate-1 text-black dark:text-white font-['Comic Sans MS',cursive]",
           select:
-            "rounded-xl border-4 border-dashed border-purple-500 p-8 px-6 text-6xl bg-yellow-100 dark:bg-yellow-900 shadow-lg transform hover:rotate-1 transition-transform inline-block mx-[18px]",
+            "rounded-xl border-4 border-dashed border-purple-500 p-8 px-6 text-6xl bg-yellow-100 dark:text-yellow-900 dark:bg-yellow-900 shadow-lg transform hover:rotate-1 transition-transform inline-block mx-[18px] text-black",
           button:
-            "text-6xl p-8 rounded-xl border-4 border-dashed border-green-500 bg-pink-100 dark:bg-pink-900 text-purple-600 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900 hover:text-pink-600 dark:hover:text-pink-300 transition-colors w-full max-w-[120px] transform hover:-rotate-3 cursor-pointer",
+            "text-6xl p-8 rounded-xl border-4 border-dashed border-green-500 bg-pink-100 dark:bg-pink-900 text-black hover:bg-purple-100 dark:hover:bg-purple-900 transition-colors w-full max-w-[120px] transform hover:-rotate-3 cursor-pointer",
           createButton:
-            "text-6xl p-8 rounded-xl border-4 border-dashed border-green-500 bg-pink-100 dark:bg-pink-900 text-purple-600 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900 hover:text-pink-600 dark:hover:text-pink-300 transition-colors w-full mt-4 transform hover:-rotate-3 cursor-pointer",
+            "text-6xl p-8 rounded-xl border-4 border-dashed border-green-500 bg-pink-100 dark:bg-pink-900 text-black dark:text-white hover:bg-purple-100 dark:hover:bg-purple-900 transition-colors w-full mt-4 transform hover:-rotate-3 cursor-pointer",
           input:
-            "text-6xl rounded-xl border-4 border-dashed border-blue-500 p-8 px-6 bg-green-100 dark:bg-green-900 inline-block mx-[18px]",
+            "text-6xl rounded-xl border-4 border-dashed border-blue-500 p-8 px-6 bg-green-100 dark:bg-green-900 inline-block mx-[18px] text-black",
         };
       case "corporate":
         return {
           form: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 gap-5 text-6xl font-semibold p-10 w-[61%] bg-gray-50 dark:bg-gray-900 text-black dark:text-white font-['Georgia',serif]",
           select:
-            "rounded-md border border-gray-300 dark:border-gray-700 p-7 px-5 text-6xl bg-white dark:bg-gray-800 shadow-md inline-block mx-[18px]",
+            "rounded-md border border-gray-300 dark:border-gray-700 p-7 px-5 text-6xl bg-white dark:bg-gray-800 shadow-md inline-block mx-[18px] text-black",
           button:
             "text-4xl p-7 rounded-md border-none bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-400 transition-colors w-full max-w-[120px] shadow-md cursor-pointer",
           createButton:
             "text-4xl p-7 rounded-md border-none bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-400 transition-colors w-full mt-4 shadow-md cursor-pointer",
           input:
-            "text-4xl rounded-md border border-gray-300 dark:border-gray-700 p-7 px-5 shadow-md inline-block mx-[18px]",
+            "text-4xl rounded-md border border-gray-300 dark:border-gray-700 p-7 px-5 shadow-md inline-block mx-[18px] text-black bg-white dark:bg-gray-800",
         };
       case "retro":
         return {
           form: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 text-6xl font-bold p-10 w-[61%] bg-amber-100 dark:bg-amber-900 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] text-black dark:text-white font-['Courier New',monospace]",
           select:
-            "rounded-none border-2 border-black dark:border-white p-8 px-6 text-6xl bg-orange-200 dark:bg-orange-800 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] inline-block mx-[18px]",
+            "rounded-none border-2 border-black dark:border-white p-8 px-6 text-6xl bg-orange-200 dark:bg-orange-800 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] inline-block mx-[18px] text-black",
           button:
             "text-6xl p-8 rounded-none border-2 border-black dark:border-white bg-teal-400 dark:bg-teal-600 text-black dark:text-white hover:bg-teal-500 dark:hover:bg-teal-700 transition-colors w-full max-w-[120px] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] cursor-pointer",
           createButton:
             "text-6xl p-8 rounded-none border-2 border-black dark:border-white bg-teal-400 dark:bg-teal-600 text-black dark:text-white hover:bg-teal-500 dark:hover:bg-teal-700 transition-colors w-full mt-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] cursor-pointer",
           input:
-            "text-6xl rounded-none border-2 border-black dark:border-white p-8 px-6 bg-rose-200 dark:bg-rose-800 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] inline-block mx-[18px]",
+            "text-6xl rounded-none border-2 border-black dark:border-white p-8 px-6 bg-rose-200 dark:bg-rose-800 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] inline-block mx-[18px] text-black",
         };
       default:
         return {
           form: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 text-6xl font-bold p-8 w-[61%] text-black dark:text-white font-['Helvetica Neue',Helvetica,Arial,sans-serif]",
           select:
-            "rounded-full border-2 border-black dark:border-white p-8 px-6 text-6xl inline-block mx-[18px]",
+            "rounded-full border-2 border-black dark:border-white p-8 px-6 text-6xl inline-block mx-[18px] text-black dark:text-white bg-white dark:bg-black",
           button:
             "text-6xl p-8 rounded-full border-2 border-black dark:border-white bg-black dark:bg-white text-white dark:text-black hover:bg-white hover:text-black dark:hover:bg-black dark:hover:text-white transition-colors w-full max-w-[120px] cursor-pointer",
           createButton:
             "text-6xl p-8 rounded-full border-2 border-black dark:border-white bg-black dark:bg-white text-white dark:text-black hover:bg-white hover:text-black dark:hover:bg-black dark:hover:text-white transition-colors w-full mt-4 cursor-pointer",
           input:
-            "text-6xl rounded-full border-2 border-black dark:border-white p-8 px-6 inline-block mx-[18px]",
+            "text-6xl rounded-full border-2 border-black dark:border-white p-8 px-6 inline-block mx-[18px] text-black dark:text-white bg-white dark:bg-black",
         };
     }
   };
@@ -213,11 +213,27 @@ export default function Home() {
             style={{
               backgroundColor: "rgb(255, 255, 255)",
               marginInline: "18px",
+              cursor: "pointer",
             }}
           >
             <SelectValue placeholder="Select style" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent
+            className={styleClasses.select}
+            style={
+              style === "neobrutalist"
+                ? {
+                    borderRadius: "10px",
+                    padding: "10px",
+                  }
+                : style === "minimalist"
+                ? {
+                    color: "white",
+                    padding: "10px",
+                  }
+                : undefined
+            }
+          >
             <SelectItem value="neobrutalist">neobrutalist</SelectItem>
             <SelectItem value="minimalist">minimalist</SelectItem>
             <SelectItem value="playful">playful</SelectItem>
@@ -253,6 +269,7 @@ export default function Home() {
             style={{
               backgroundColor: "rgb(255, 144, 232)",
               marginInline: "18px",
+              cursor: "pointer",
             }}
           >
             <SelectValue placeholder="Select purpose" />
