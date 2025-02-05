@@ -21,7 +21,7 @@ export async function POST(req: Request) {
   - Use semantic HTML elements
   - Be creative while maintaining professional design standards`;
 
-  const { elementStream } = streamObject({
+  const { partialObjectStream } = streamObject({
     model: anthropic("claude-3-5-sonnet-20241022"),
     temperature: 0.7,
     schema: z.object({
@@ -32,14 +32,14 @@ export async function POST(req: Request) {
     prompt,
   });
 
-  let landingPage = "";
-  for await (const element of elementStream) {
-    console.log(landingPage);
-    landingPage = element.landingPage;
-    break;
-  }
+  console.log("hello");
 
-  console.log(landingPage);
+  let landingPage = "";
+  for await (const partialObject of partialObjectStream) {
+    console.clear();
+    console.log(partialObject);
+    landingPage = partialObject.landingPage;
+  }
 
   return new Response(JSON.stringify([landingPage]), {
     headers: { "Content-Type": "application/json" },
