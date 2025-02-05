@@ -270,7 +270,7 @@ export default function Home() {
           className={styleClasses.createButton}
           disabled={isGenerating}
         >
-          {isGenerating ? "Generating..." : "Create"}
+          {isGenerating ? "Creating..." : "Create"}
         </Button>
       </form>
     </div>
