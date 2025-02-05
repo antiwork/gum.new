@@ -1,5 +1,5 @@
 import { anthropic } from "@ai-sdk/anthropic";
-//import { openai } from "@ai-sdk/openai";
+import { openai } from "@ai-sdk/openai";
 import { streamObject } from "ai";
 import { z } from "zod";
 
@@ -15,14 +15,14 @@ export async function POST(req: Request) {
 
   The section should:
   - Use only Tailwind CSS classes for styling (no custom CSS)
-  - Be complete, self-contained HTML
+  - Be complete, self-contained HTML, not including the doctype, html, head, or body tags
   - Follow modern landing page best practices
   - Include responsive design classes
   - Use semantic HTML elements
   - Be creative while maintaining professional design standards`;
 
   const { partialObjectStream } = streamObject({
-    model: anthropic("claude-3-5-sonnet-20241022"),
+    model: anthropic("claude-3-5-sonnet-20241022") || openai("gpt-4o-mini"),
     temperature: 0.7,
     schema: z.object({
       landingPage: z
@@ -32,12 +32,12 @@ export async function POST(req: Request) {
     prompt,
   });
 
-  console.log("hello");
-
   let landingPage = "";
   for await (const partialObject of partialObjectStream) {
     console.log(partialObject);
-    landingPage = partialObject.landingPage;
+    if (partialObject.landingPage) {
+      landingPage = partialObject.landingPage;
+    }
   }
 
   return new Response(JSON.stringify([landingPage]), {
