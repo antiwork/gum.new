@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { redirect } from "next/navigation";
-import { FallingCoinsLoader } from "./loader/page";
+import { Loader } from "@/components/ui/loader";
 
 export default function Home() {
   const [style, setStyle] = useState("neobrutalist");
@@ -158,7 +158,7 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#f4f4f0] dark:bg-black dark:text-white">
-      {isLoading ? <FallingCoinsLoader /> : null}
+      {isLoading ? <Loader /> : null}
       <h1 className="font-bold z-11 absolute top-4 left-4 flex items-center">
         <svg
           width="49"
