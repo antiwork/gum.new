@@ -8,7 +8,7 @@ const COIN_SIZE = 100;
 const ADD_COIN_INTERVAL = 50; // Reduced from 100 to 50 to add coins faster
 const LOADING_DURATION = 10000; // 10 seconds
 
-const FallingCoinsLoader: React.FC = () => {
+export const FallingCoinsLoader: React.FC = () => {
   const sceneRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<Matter.Engine | null>(null);
   const [coins, setCoins] = useState<Matter.Body[]>([]);

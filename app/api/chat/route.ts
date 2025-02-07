@@ -2,6 +2,7 @@ import { anthropic } from "@ai-sdk/anthropic";
 import { openai } from "@ai-sdk/openai";
 import { streamObject } from "ai";
 import { z } from "zod";
+import { createGum } from "@/services/gums";
 
 export const maxDuration = 30;
 
@@ -40,7 +41,15 @@ export async function POST(req: Request) {
     }
   }
 
-  return new Response(JSON.stringify([landingPage]), {
+  const { gum, version } = await createGum({
+    title: lastMessage,
+    version: {
+      html: landingPage,
+      prompt: prompt,
+    },
+  });
+
+  return new Response(JSON.stringify({ id: gum.id, html: version.html }), {
     headers: { "Content-Type": "application/json" },
   });
 }

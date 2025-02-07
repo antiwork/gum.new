@@ -6,7 +6,7 @@ export type Version = typeof schema.versions.$inferSelect;
 
 export interface CreateGumInput {
   title: string;
-  version?: {
+  version: {
     html: string;
     prompt: string;
   };
@@ -14,7 +14,7 @@ export interface CreateGumInput {
 
 export interface CreateGumOutput {
   gum: Gum;
-  version?: Version;
+  version: Version;
 }
 
 export async function createGum(
@@ -29,23 +29,14 @@ export async function createGum(
     throw new Error("Failed to create gum");
   }
 
-  let version;
-  if (input.version) {
-    const { html, prompt } = input.version;
-    const [createdVersion] = await db
-      .insert(schema.versions)
-      .values({
-        html,
-        prompt,
-        gumId: gum.id,
-      })
-      .returning();
-
-    if (!createdVersion) {
-      throw new Error("Failed to create gum version");
-    }
-    version = createdVersion;
-  }
+  const [version] = await db
+    .insert(schema.versions)
+    .values({
+      html: input.version.html,
+      prompt: input.version.prompt,
+      gumId: gum.id,
+    })
+    .returning();
 
   return { gum, version };
 }

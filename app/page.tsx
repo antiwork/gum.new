@@ -10,15 +10,17 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
+import { redirect } from "next/navigation";
+import { FallingCoinsLoader } from "./loader/page";
 
 export default function Home() {
   const [style, setStyle] = useState("neobrutalist");
   const [purpose, setPurpose] = useState("sell a digital product");
   const [customStyle, setCustomStyle] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [landingPage, setLandingPage] = useState("");
   const [about, setAbout] = useState("");
   const [newsletterUrl, setNewsletterUrl] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const savedStyle = localStorage.getItem("style") || "neobrutalist";
@@ -55,9 +57,8 @@ export default function Home() {
 
     setIsGenerating(true);
 
-    console.log("STARTING");
-
     try {
+      setIsLoading(true);
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: {
@@ -68,14 +69,11 @@ export default function Home() {
         }),
       });
 
-      const [newLandingPage] = await response.json();
-      console.log("SUCCESS");
-      console.log(newLandingPage);
-      setLandingPage(newLandingPage);
-      const resultDiv = document.getElementById("results") as HTMLDivElement;
-      resultDiv.innerHTML = newLandingPage;
+      const { id } = await response.json();
+      redirect(`/gum/${id}`);
     } finally {
       setIsGenerating(false);
+      setIsLoading(false);
     }
   };
 
@@ -160,11 +158,7 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#f4f4f0] dark:bg-black dark:text-white">
-      <div
-        id="results"
-        className="w-full h-screen p-4 text-lg font-normal absolute top-0 left-0"
-        dangerouslySetInnerHTML={{ __html: landingPage }}
-      />
+      {isLoading ? <FallingCoinsLoader /> : null}
       <h1 className="font-bold z-11 absolute top-4 left-4 flex items-center">
         <svg
           width="49"
