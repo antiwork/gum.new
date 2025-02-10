@@ -74,21 +74,7 @@ export default function Home() {
     }
   };
 
-  if (!isLoggedIn) {
-    return (
-      <div className="relative flex min-h-screen items-center justify-center bg-[#f4f4f0] dark:bg-black dark:text-white">
-        <div className="absolute inset-0 bg-[rgba(255,144,232,0.8)] backdrop-blur-sm" />
-        <Button
-          onClick={() => setIsLoggedIn(true)}
-          className="cursor-pointer relative z-10 text-5xl font-bold p-8 rounded-full border-4 border-black dark:border-white bg-white text-black hover:bg-black hover:text-white transition-colors"
-        >
-          Login with Gumroad
-        </Button>
-      </div>
-    );
-  }
-
-  return (
+  const loggedInContent = (
     <div className="flex min-h-screen items-center justify-center bg-[#f4f4f0] dark:bg-black dark:text-white">
       <div
         id="results"
@@ -129,6 +115,28 @@ export default function Home() {
           {isGenerating ? "Creating..." : "Create"}
         </Button>
       </form>
+    </div>
+  );
+
+  return (
+    <div className="relative">
+      {/* Show logged in content behind with blur */}
+      <div className={`${!isLoggedIn ? "opacity-80 blur-sm" : ""}`}>
+        {loggedInContent}
+      </div>
+
+      {/* Show login overlay if not logged in */}
+      {!isLoggedIn && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="absolute inset-0 bg-[rgba(255,144,232,0.8)] backdrop-blur-sm" />
+          <Button
+            onClick={() => setIsLoggedIn(true)}
+            className="cursor-pointer relative z-10 text-5xl font-bold p-8 rounded-full border-4 border-black dark:border-white bg-white text-black hover:bg-black hover:text-white transition-colors"
+          >
+            Login with Gumroad
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
