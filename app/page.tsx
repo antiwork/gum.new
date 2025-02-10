@@ -8,13 +8,11 @@ export default function Home() {
   const [about, setAbout] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [landingPage, setLandingPage] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Add login state
   const defaultText = "a landing page to sell a digital product on ";
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    const savedAbout = localStorage.getItem("about") || defaultText;
-    setAbout(savedAbout);
-
     let index = 0;
     let typeInterval: NodeJS.Timeout;
 
@@ -22,9 +20,8 @@ export default function Home() {
       if (index < defaultText.length) {
         setAbout(defaultText.slice(0, index + 1));
         index++;
-        typeInterval = setTimeout(type, Math.random() * 20 + 20); // Random delay each iteration
+        typeInterval = setTimeout(type, Math.random() * 20 + 20);
       } else {
-        // Focus and move cursor to end after typing animation
         if (inputRef.current) {
           inputRef.current.focus();
           inputRef.current.setSelectionRange(
@@ -77,6 +74,20 @@ export default function Home() {
     }
   };
 
+  if (!isLoggedIn) {
+    return (
+      <div className="relative flex min-h-screen items-center justify-center bg-[#f4f4f0] dark:bg-black dark:text-white">
+        <div className="absolute inset-0 bg-[rgba(255,144,232,0.8)] backdrop-blur-sm" />
+        <Button
+          onClick={() => setIsLoggedIn(true)}
+          className="cursor-pointer relative z-10 text-5xl font-bold p-8 rounded-full border-4 border-black dark:border-white bg-white text-black hover:bg-black hover:text-white transition-colors"
+        >
+          Login with Gumroad
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#f4f4f0] dark:bg-black dark:text-white">
       <div
@@ -107,7 +118,6 @@ export default function Home() {
           }}
           onChange={(e) => {
             setAbout(e.target.value);
-            localStorage.setItem("about", e.target.value);
           }}
         />
         <Button
