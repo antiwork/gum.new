@@ -137,7 +137,11 @@ export default function Home() {
         <Logo />
       </div>
 
-      <div ref={resultsRef} className="relative w-full min-h-screen p-4">
+      <div
+        ref={resultsRef}
+        className="relative w-full min-h-screen p-4"
+        contentEditable
+      >
         <div dangerouslySetInnerHTML={{ __html: landingPage }} />
       </div>
 
@@ -176,7 +180,7 @@ export default function Home() {
               height: "40px",
             }}
           />
-          <div className="absolute top-[80px] flex flex-col items-center">
+          <div className="absolute top-[50px] flex flex-col items-center">
             <div className="flex items-center gap-1">
               {inputText ? (
                 <>
