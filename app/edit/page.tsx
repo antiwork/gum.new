@@ -154,7 +154,7 @@ export default function Home() {
             <span
               style={{ backgroundColor: "rgb(255, 144, 232)", color: "black" }}
             >
-              highlight
+              Highlight
             </span>{" "}
             to make changes
           </span>
