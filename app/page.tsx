@@ -122,7 +122,7 @@ export default function Home() {
           ref={inputRef}
           name="about"
           placeholder="..."
-          className="block w-full mt-4 text-6xl rounded-[20px] border-4 dark:text-black dark:border-white border-black dark:border-white py-6 px-6 resize-none"
+          className="block w-full mt-2 text-6xl rounded-[20px] border-4 dark:text-black dark:border-white border-black dark:border-white py-6 px-6 resize-none"
           value={about}
           style={{
             backgroundColor: "rgba(255, 144, 232)",
@@ -138,7 +138,7 @@ export default function Home() {
         <Button
           type="submit"
           variant="outline"
-          className="text-5xl font-bold p-8 w-full rounded-full border-4 border-black dark:border-white bg-black dark:bg-black text-white dark:text-white hover:bg-white hover:text-black dark:hover:bg-white dark:hover:text-black transition-colors cursor-pointer"
+          className="text-5xl mt-8 font-bold p-8 w-full rounded-full border-4 border-black dark:border-white bg-black dark:bg-black text-white dark:text-white hover:bg-white hover:text-black dark:hover:bg-white dark:hover:text-black transition-colors cursor-pointer"
           disabled={isGenerating}
         >
           {isGenerating ? "Creating..." : "Create"}
