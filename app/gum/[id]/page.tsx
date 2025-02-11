@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import db from "@/db";
+import Editor from "./Editor";
 
 export default async function Page({
   params,
@@ -17,10 +18,5 @@ export default async function Page({
     notFound();
   }
 
-  return (
-    <div
-      className="w-full min-h-screen p-4 text-lg font-normal bg-[#f4f4f0] dark:bg-black dark:text-white"
-      dangerouslySetInnerHTML={{ __html: version.html }}
-    />
-  );
+  return <Editor initialHtml={version.html} />;
 }
