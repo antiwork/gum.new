@@ -176,7 +176,7 @@ export default function Home() {
               height: "40px",
             }}
           />
-          <div className="absolute top-[80px] flex flex-col items-center">
+          <div className="absolute top-[50px] flex flex-col items-center">
             <div className="flex items-center gap-1">
               {inputText ? (
                 <>
