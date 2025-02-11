@@ -21,7 +21,9 @@ export default function Home() {
   `);
   const [isEditing, setIsEditing] = useState(false);
   const [inputText, setInputText] = useState("");
-  const [selectedElement, setSelectedElement] = useState<HTMLElement | null>(null);
+  const [selectedElement, setSelectedElement] = useState<HTMLElement | null>(
+    null
+  );
 
   const resultsRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -43,24 +45,28 @@ export default function Home() {
       const elements = document.elementsFromPoint(e.clientX, e.clientY);
 
       // Find the first content element under the cursor within our results container
-      const contentElement = elements.find(el => {
+      const contentElement = elements.find((el) => {
         if (!(el instanceof HTMLElement)) return false;
         if (!resultsRef.current?.contains(el)) return false;
-        return ['DIV', 'H1', 'H2', 'P', 'BUTTON', 'A', 'LI'].includes(el.tagName);
+        return ["DIV", "H1", "H2", "P", "BUTTON", "A", "LI"].includes(
+          el.tagName
+        );
       }) as HTMLElement | undefined;
 
       // Clear previous hover outlines
-      const allElements = resultsRef.current.querySelectorAll('div, h1, h2, p, button, a, li');
-      allElements.forEach(el => {
+      const allElements = resultsRef.current.querySelectorAll(
+        "div, h1, h2, p, button, a, li"
+      );
+      allElements.forEach((el) => {
         if (el !== selectedElement) {
-          (el as HTMLElement).style.outline = 'none';
+          (el as HTMLElement).style.outline = "none";
         }
       });
 
       // Add hover outline to current element
       if (contentElement && contentElement !== selectedElement) {
-        contentElement.style.outline = '2px solid rgba(255, 144, 232, 0.3)';
-        contentElement.style.cursor = 'pointer';
+        contentElement.style.outline = "2px solid rgba(255, 144, 232, 0.3)";
+        contentElement.style.cursor = "pointer";
       }
     };
 
@@ -68,36 +74,38 @@ export default function Home() {
       if (isEditing) return;
 
       const elements = document.elementsFromPoint(e.clientX, e.clientY);
-      const contentElement = elements.find(el => {
+      const contentElement = elements.find((el) => {
         if (!(el instanceof HTMLElement)) return false;
         if (!resultsRef.current?.contains(el)) return false;
-        return ['DIV', 'H1', 'H2', 'P', 'BUTTON', 'A', 'LI'].includes(el.tagName);
+        return ["DIV", "H1", "H2", "P", "BUTTON", "A", "LI"].includes(
+          el.tagName
+        );
       }) as HTMLElement | undefined;
 
       if (contentElement) {
         e.preventDefault();
         if (selectedElement) {
-          selectedElement.style.outline = 'none';
+          selectedElement.style.outline = "none";
         }
-        contentElement.style.outline = '2px solid rgb(255, 144, 232)';
+        contentElement.style.outline = "2px solid rgb(255, 144, 232)";
         setSelectedElement(contentElement);
         setIsEditing(true);
       }
     };
 
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('click', handleClick);
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("click", handleClick);
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('click', handleClick);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("click", handleClick);
     };
   }, [isEditing, selectedElement]);
 
   // Clear selection when editing is closed
   useEffect(() => {
     if (!isEditing && selectedElement) {
-      selectedElement.style.outline = 'none';
+      selectedElement.style.outline = "none";
       setSelectedElement(null);
     }
   }, [isEditing]);
