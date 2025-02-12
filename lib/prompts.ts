@@ -19,7 +19,7 @@ export function generateLandingPagePrompt(purpose: string) {
     - Maintains professional design standards while being creative`;
 }
 
-export function getEditPrompt(text: string, elementHtml: string) {
+export function editLandingPagePrompt(text: string, elementHtml: string) {
   return `${BASE_PROMPT}
 
     Given this HTML element and requested change:
