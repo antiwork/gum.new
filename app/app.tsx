@@ -101,10 +101,7 @@ export default function App({ isAuthenticated }: { isAuthenticated: boolean }) {
             paddingTop: "18px",
             paddingBottom: "18px",
           }}
-          onChange={(e) => {
-            setAbout(e.target.value);
-            localStorage.setItem("about", e.target.value);
-          }}
+          onChange={(e) => setAbout(e.target.value)}
         />
         <Button
           type="submit"
