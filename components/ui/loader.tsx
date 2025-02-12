@@ -6,9 +6,8 @@ import Matter from "matter-js";
 
 const COIN_SIZE = 100;
 const ADD_COIN_INTERVAL = 50; // Reduced from 100 to 50 to add coins faster
-const LOADING_DURATION = 10000; // 10 seconds
 
-export const Loader: React.FC = () => {
+export const Loader: React.FC<{ shouldDrop?: boolean }> = ({ shouldDrop = false }) => {
   const sceneRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<Matter.Engine | null>(null);
   const [coins, setCoins] = useState<Matter.Body[]>([]);
@@ -106,24 +105,23 @@ export const Loader: React.FC = () => {
 
     engineRef.current = engine;
 
-    // Remove floor after loading duration
-    setTimeout(() => {
-      if (engineRef.current && wallsRef.current) {
-        Matter.World.remove(engineRef.current.world, wallsRef.current[0]); // Remove only the floor
-      }
-    }, LOADING_DURATION);
-
     return () => {
       Matter.Render.stop(render);
       Matter.World.clear(world, false);
       Matter.Engine.clear(engine);
       render.canvas.remove();
-      // Create a new canvas element instead of setting to null
       render.canvas = document.createElement("canvas");
       render.context = render.canvas.getContext("2d")!;
       render.textures = {};
     };
   }, []);
+
+  // Add new effect to watch for shouldDrop
+  useEffect(() => {
+    if (shouldDrop && engineRef.current && wallsRef.current) {
+      Matter.World.remove(engineRef.current.world, wallsRef.current[0]); // Remove only the floor
+    }
+  }, [shouldDrop]);
 
   useEffect(() => {
     if (!engineRef.current) return;
@@ -171,14 +169,8 @@ export const Loader: React.FC = () => {
       setCoins((prevCoins) => [...prevCoins, newCoin]);
     }, ADD_COIN_INTERVAL);
 
-    // Clear interval after loading duration
-    const timeoutId = setTimeout(() => {
-      clearInterval(interval);
-    }, LOADING_DURATION);
-
     return () => {
       clearInterval(interval);
-      clearTimeout(timeoutId);
     };
   }, [coins]);
 
@@ -187,3 +179,4 @@ export const Loader: React.FC = () => {
     </div>
   );
 };
+

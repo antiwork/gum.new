@@ -12,6 +12,8 @@ export default function Home() {
   const defaultText = "a landing page to sell a digital product on ";
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [shouldDrop, setShouldDrop] = useState(false);
+
   useEffect(() => {
     const savedAbout = localStorage.getItem("about") || defaultText;
     setAbout(savedAbout);
@@ -65,8 +67,10 @@ export default function Home() {
           messages,
         }),
       });
-
+    
+      setShouldDrop(true);
       const { id } = await response.json();
+      await new Promise((resolve) => setTimeout(resolve, 750));
       redirect(`/gum/${id}`);
     } finally {
       setIsGenerating(false);
@@ -79,7 +83,7 @@ export default function Home() {
       <div className="absolute top-4 left-4">
         <Logo />
       </div>
-      {isLoading ? <Loader /> : null}
+      {isLoading ? <Loader shouldDrop={shouldDrop} /> : null}
       <form
         onSubmit={handleSubmit}
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 text-6xl font-bold px-8 w-full max-w-[61%] sm:w-[calc(100%-4rem)] leading-2 text-black dark:text-white font-['Helvetica Neue',Helvetica,Arial,sans-serif]"
