@@ -4,6 +4,7 @@
   "editor.formatOnPaste": true,
   "editor.formatOnSave": true,
   "editor.formatOnSaveMode": "file",
-  "files.autoSave": "onFocusChange",
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 1000,
   "vs-code-prettier-eslint.prettierLast": false
 }
