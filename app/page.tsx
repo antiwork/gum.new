@@ -2,6 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { useEffect, useState, useRef } from "react";
+import { redirect } from "next/navigation";
+import { Loader } from "@/components/ui/loader";
 import Logo from "./components/Logo";
 
 export default function Home() {
@@ -11,7 +13,7 @@ export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Add login state
   const defaultText = "a landing page to sell a digital product on ";
   const inputRef = useRef<HTMLTextAreaElement>(null);
-
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     let index = 0;
     let typeInterval: NodeJS.Timeout;
@@ -50,9 +52,8 @@ export default function Home() {
 
     setIsGenerating(true);
 
-    console.log("STARTING");
-
     try {
+      setIsLoading(true);
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: {
@@ -63,27 +64,20 @@ export default function Home() {
         }),
       });
 
-      const [newLandingPage] = await response.json();
-      console.log("SUCCESS");
-      console.log(newLandingPage);
-      setLandingPage(newLandingPage);
-      const resultDiv = document.getElementById("results") as HTMLDivElement;
-      resultDiv.innerHTML = newLandingPage;
+      const { id } = await response.json();
+      redirect(`/gum/${id}`);
     } finally {
       setIsGenerating(false);
+      setIsLoading(false);
     }
   };
 
   const loggedInContent = (
     <div className="flex min-h-screen items-center justify-center bg-[#f4f4f0] dark:bg-black dark:text-white">
-      <div
-        id="results"
-        className="w-full h-screen p-4 text-lg font-normal absolute top-0 left-0"
-        dangerouslySetInnerHTML={{ __html: landingPage }}
-      />
       <div className="absolute top-4 left-4">
         <Logo />
       </div>
+      {isLoading ? <Loader /> : null}
       <form
         onSubmit={handleSubmit}
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 text-6xl font-bold px-8 w-full max-w-[61%] sm:w-[calc(100%-4rem)] leading-2 text-black dark:text-white font-['Helvetica Neue',Helvetica,Arial,sans-serif]"
@@ -94,7 +88,7 @@ export default function Home() {
           ref={inputRef}
           name="about"
           placeholder="..."
-          className="block w-full mt-2 text-6xl rounded-[20px] border-4 dark:text-black dark:border-white border-black dark:border-white py-6 px-6 resize-none"
+          className="block w-full mt-2 text-6xl rounded-[20px] border-4 dark:text-black dark:border-white border-black py-6 px-6 resize-none"
           value={about}
           style={{
             backgroundColor: "rgba(255, 144, 232)",

@@ -8,7 +8,7 @@ const COIN_SIZE = 100;
 const ADD_COIN_INTERVAL = 50; // Reduced from 100 to 50 to add coins faster
 const LOADING_DURATION = 10000; // 10 seconds
 
-const FallingCoinsLoader: React.FC = () => {
+export const Loader: React.FC = () => {
   const sceneRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<Matter.Engine | null>(null);
   const [coins, setCoins] = useState<Matter.Body[]>([]);
@@ -184,15 +184,6 @@ const FallingCoinsLoader: React.FC = () => {
 
   return (
     <div ref={sceneRef} className="fixed inset-0 z-50">
-      {/* Remove the coin divs since Matter.js is handling the rendering */}
     </div>
   );
 };
-
-export default function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-[#f4f4f0] dark:bg-black dark:text-white">
-      <FallingCoinsLoader />
-    </div>
-  );
-}
