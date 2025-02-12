@@ -163,14 +163,11 @@ export const Loader = ({ isDoneLoading }: { isDoneLoading: boolean }) => {
       setCoins((prevCoins) => [...prevCoins, newCoin]);
     }, ADD_COIN_INTERVAL);
 
-    // Removed interval clearance timeout
-
     return () => {
       clearInterval(interval);
     };
   }, [coins]);
 
-  // Only change here: use isLoading instead of the previous loadingComplete prop to trigger floor removal.
   useEffect(() => {
     if (isDoneLoading && engineRef.current && wallsRef.current.length) {
       // Remove the floor so coins can fall away when loading is finished
