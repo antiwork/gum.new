@@ -3,6 +3,7 @@ import { openai } from "@ai-sdk/openai";
 import { streamObject } from "ai";
 import { z } from "zod";
 import { createGum } from "@/services/gums";
+import { generateLandingPagePrompt } from '@/lib/prompts';
 
 export const maxDuration = 30;
 
@@ -13,17 +14,7 @@ export async function POST(req: Request) {
   const { messages } = await req.json();
   const lastMessage = messages[messages.length - 1].content;
 
-  const prompt = `You are an expert web developer specializing in creating landing pages with Tailwind CSS.
-    Generate a compelling landing page for the following purpose:
-    "${lastMessage}"
-
-    The section should:
-    - Use only Tailwind CSS classes for styling (no custom CSS)
-    - Be complete, self-contained HTML, not including the doctype, html, head, or body tags
-    - Follow modern landing page best practices
-    - Include responsive design classes
-    - Use semantic HTML elements
-    - Be creative while maintaining professional design standards`;
+  const prompt = generateLandingPagePrompt(lastMessage);
 
   if (DEBUG_MODE) {
     await new Promise((resolve) => setTimeout(resolve, 1250));
