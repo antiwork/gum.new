@@ -9,10 +9,11 @@ import { signIn } from "next-auth/react";
 
 export default function App({ isAuthenticated }: { isAuthenticated: boolean }) {
   const [about, setAbout] = useState("");
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [status, setStatus] = useState<"initial" | "generating" | "finished">(
+    "initial"
+  );
   const defaultText = "a landing page to sell a digital product on ";
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     let index = 0;
@@ -47,10 +48,9 @@ export default function App({ isAuthenticated }: { isAuthenticated: boolean }) {
       },
     ];
 
-    setIsGenerating(true);
+    setStatus("generating");
 
     try {
-      setIsLoading(true);
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: {
@@ -62,10 +62,13 @@ export default function App({ isAuthenticated }: { isAuthenticated: boolean }) {
       });
 
       const { id } = await response.json();
-      redirect(`/gum/${id}`);
-    } finally {
-      setIsGenerating(false);
-      setIsLoading(false);
+      setStatus("finished");
+      setTimeout(() => {
+        redirect(`/gum/${id}`);
+      }, 1000);
+    } catch (error) {
+      console.error("Error generating content:", error);
+      setStatus("initial");
     }
   };
 
@@ -74,7 +77,9 @@ export default function App({ isAuthenticated }: { isAuthenticated: boolean }) {
       <div className="absolute top-4 left-4">
         <Logo />
       </div>
-      {isLoading ? <Loader /> : null}
+      {status !== "initial" ? (
+        <Loader isDoneLoading={status === "finished"} />
+      ) : null}
       <form
         onSubmit={handleSubmit}
         className="font-['Helvetica Neue',Helvetica,Arial,sans-serif] absolute top-1/2 left-1/2 z-10 w-full max-w-[61%] -translate-x-1/2 -translate-y-1/2 px-8 text-6xl leading-2 font-bold text-black sm:w-[calc(100%-4rem)] dark:text-white"
@@ -93,17 +98,15 @@ export default function App({ isAuthenticated }: { isAuthenticated: boolean }) {
             paddingTop: "18px",
             paddingBottom: "18px",
           }}
-          onChange={(e) => {
-            setAbout(e.target.value);
-          }}
+          onChange={(e) => setAbout(e.target.value)}
         />
         <Button
           type="submit"
           variant="outline"
           className="mt-8 w-full cursor-pointer rounded-full border-4 border-black bg-black p-8 text-5xl font-bold text-white transition-colors hover:bg-white hover:text-black dark:border-white dark:bg-black dark:text-white dark:hover:bg-white dark:hover:text-black"
-          disabled={isGenerating}
+          disabled={status === "generating"}
         >
-          {isGenerating ? "Creating..." : "Create"}
+          {status === "generating" ? "Creating..." : "Create"}
         </Button>
       </form>
     </div>
