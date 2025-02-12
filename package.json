@@ -9,7 +9,7 @@
     "dev:db:studio": "dotenv -e .env.local -- drizzle-kit studio",
     "build": "drizzle-kit migrate && next build",
     "start": "next start",
-    "format": "prettier --check . --ignore-path ./.gitignore --ignore-path ./.prettierignore",
+    "format": "prettier --write --check . --ignore-path ./.gitignore --ignore-path ./.prettierignore",
     "lint": "next lint",
     "typecheck": "tsc --noEmit --incremental"
   },
