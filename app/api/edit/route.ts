@@ -2,7 +2,7 @@ import { anthropic } from '@ai-sdk/anthropic';
 import { openai } from '@ai-sdk/openai';
 import { streamObject } from 'ai';
 import { z } from 'zod';
-import { getEditPrompt } from '@/lib/prompts';
+import { editLandingPagePrompt } from '@/lib/prompts';
 
 export const maxDuration = 30;
 
@@ -11,7 +11,7 @@ export async function POST(req: Request) {
 
   console.log('Received request:', { text, element });
 
-  const prompt = getEditPrompt(text, element.html);
+  const prompt = editLandingPagePrompt(text, element.html);
 
   const { partialObjectStream } = streamObject({
     model: anthropic('claude-3-5-sonnet-20241022') || openai('gpt-4o-mini'),
