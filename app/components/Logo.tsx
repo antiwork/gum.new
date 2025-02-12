@@ -1,6 +1,6 @@
 export default function Logo() {
   return (
-    <h1 className="font-bold z-11 flex items-center">
+    <h1 className="z-11 flex items-center font-bold">
       <svg
         width="49"
         height="14"
@@ -23,7 +23,7 @@ export default function Logo() {
         />
       </svg>
       <span
-        className="ml-2 text-dark dark:text-white rounded-full px-2 border-1 border-black dark:border-white"
+        className="text-dark ml-2 rounded-full border-1 border-black px-2 dark:border-white dark:text-white"
         style={{ backgroundColor: "rgb(255, 144, 232)" }}
       >
         .new

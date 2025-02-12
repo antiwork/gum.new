@@ -100,12 +100,8 @@
           "name": "versions_gum_id_gums_id_fk",
           "tableFrom": "versions",
           "tableTo": "gums",
-          "columnsFrom": [
-            "gum_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["gum_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -113,12 +109,8 @@
           "name": "fk_versions_parent",
           "tableFrom": "versions",
           "tableTo": "versions",
-          "columnsFrom": [
-            "parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }

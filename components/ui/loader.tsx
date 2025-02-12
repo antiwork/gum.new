@@ -52,26 +52,14 @@ export const Loader: React.FC = () => {
 
     // add walls with more bounce - only sides and floor
     const walls = [
-      Matter.Bodies.rectangle(
-        window.innerWidth / 2,
-        window.innerHeight + COIN_SIZE,
-        window.innerWidth,
-        COIN_SIZE * 2,
-        {
-          isStatic: true,
-          restitution: 0.6,
-        }
-      ),
-      Matter.Bodies.rectangle(
-        -COIN_SIZE,
-        window.innerHeight / 2,
-        COIN_SIZE * 2,
-        window.innerHeight,
-        {
-          isStatic: true,
-          restitution: 0.6,
-        }
-      ),
+      Matter.Bodies.rectangle(window.innerWidth / 2, window.innerHeight + COIN_SIZE, window.innerWidth, COIN_SIZE * 2, {
+        isStatic: true,
+        restitution: 0.6,
+      }),
+      Matter.Bodies.rectangle(-COIN_SIZE, window.innerHeight / 2, COIN_SIZE * 2, window.innerHeight, {
+        isStatic: true,
+        restitution: 0.6,
+      }),
       Matter.Bodies.rectangle(
         window.innerWidth + COIN_SIZE,
         window.innerHeight / 2,
@@ -80,7 +68,7 @@ export const Loader: React.FC = () => {
         {
           isStatic: true,
           restitution: 0.6,
-        }
+        },
       ),
     ];
 
@@ -130,9 +118,7 @@ export const Loader: React.FC = () => {
 
     const interval = setInterval(() => {
       // Check if any coins are above the viewport
-      const hasSpaceForMoreCoins = coins.every(
-        (coin) => coin.position.y > COIN_SIZE
-      );
+      const hasSpaceForMoreCoins = coins.every((coin) => coin.position.y > COIN_SIZE);
 
       if (!hasSpaceForMoreCoins) {
         return;
@@ -156,7 +142,7 @@ export const Loader: React.FC = () => {
               yScale: COIN_SIZE / textureRef.current!.height,
             },
           },
-        }
+        },
       );
 
       // Add random initial velocity

@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from "react";
 
 async function updateElement(
   text: string,
@@ -9,29 +9,29 @@ async function updateElement(
     tagName: string;
     textContent: string;
   },
-  fullHtml: string
+  fullHtml: string,
 ) {
   // Create temporary element to strip style attributes
-  const temp = document.createElement('div');
+  const temp = document.createElement("div");
   temp.innerHTML = element.html;
   const elementWithoutStyle = temp.firstElementChild;
   if (elementWithoutStyle) {
-    elementWithoutStyle.removeAttribute('style');
+    elementWithoutStyle.removeAttribute("style");
   }
 
-  const response = await fetch('/api/edit', {
-    method: 'POST',
+  const response = await fetch("/api/edit", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json'
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       text,
       element: {
         ...element,
-        html: elementWithoutStyle?.outerHTML || element.html
+        html: elementWithoutStyle?.outerHTML || element.html,
       },
-      fullHtml
-    })
+      fullHtml,
+    }),
   });
 
   const data = await response.json();
@@ -41,7 +41,7 @@ async function updateElement(
 export default function Editor({ initialHtml }: { initialHtml: string }) {
   const [isEditing, setIsEditing] = useState(false);
   const [selectedElement, setSelectedElement] = useState<HTMLElement | null>(null);
-  const inputValueRef = useRef('');
+  const inputValueRef = useRef("");
 
   const resultsRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -69,23 +69,23 @@ export default function Editor({ initialHtml }: { initialHtml: string }) {
       const contentElement = elements.find((el) => {
         if (!(el instanceof HTMLElement)) return false;
         if (!resultsRef.current?.contains(el)) return false;
-        return ['DIV', 'H1', 'H2', 'P', 'BUTTON', 'A', 'LI'].includes(el.tagName);
+        return ["DIV", "H1", "H2", "P", "BUTTON", "A", "LI"].includes(el.tagName);
       }) as HTMLElement | undefined;
 
       if (!resultsRef.current) return;
 
       // Clear previous hover outlines
-      const allElements = resultsRef.current.querySelectorAll('div, h1, h2, p, button, a, li');
+      const allElements = resultsRef.current.querySelectorAll("div, h1, h2, p, button, a, li");
       allElements.forEach((el) => {
         if (el !== selectedElement) {
-          (el as HTMLElement).style.outline = 'none';
+          (el as HTMLElement).style.outline = "none";
         }
       });
 
       // Add hover outline to current element
       if (contentElement && contentElement !== selectedElement) {
-        contentElement.style.outline = '2px solid rgba(255, 144, 232, 0.3)';
-        contentElement.style.cursor = 'pointer';
+        contentElement.style.outline = "2px solid rgba(255, 144, 232, 0.3)";
+        contentElement.style.cursor = "pointer";
       }
     };
 
@@ -95,30 +95,30 @@ export default function Editor({ initialHtml }: { initialHtml: string }) {
       const contentElement = elements.find((el) => {
         if (!(el instanceof HTMLElement)) return false;
         if (!resultsRef.current?.contains(el)) return false;
-        return ['DIV', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'P', 'BUTTON', 'A', 'LI'].includes(el.tagName);
+        return ["DIV", "H1", "H2", "H3", "H4", "H5", "H6", "P", "BUTTON", "A", "LI"].includes(el.tagName);
       }) as HTMLElement | undefined;
       if (!contentElement) return;
       e.preventDefault();
       if (selectedElement) {
-        selectedElement.style.outline = 'none';
+        selectedElement.style.outline = "none";
       }
-      contentElement.style.outline = '2px solid rgb(255, 144, 232)';
+      contentElement.style.outline = "2px solid rgb(255, 144, 232)";
       setSelectedElement(contentElement);
       setIsEditing(true);
     };
 
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('click', handleClick);
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("click", handleClick);
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('click', handleClick);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("click", handleClick);
     };
   }, [isEditing, selectedElement]);
 
   // Add custom selection color styles
   useEffect(() => {
-    const style = document.createElement('style');
+    const style = document.createElement("style");
     style.textContent = `
       ::selection {
         background-color: rgb(255, 144, 232);
@@ -134,11 +134,11 @@ export default function Editor({ initialHtml }: { initialHtml: string }) {
   // Handle keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setIsEditing(true);
       }
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         e.preventDefault();
         setIsEditing(false);
         // Remove focus from any active element
@@ -148,9 +148,9 @@ export default function Editor({ initialHtml }: { initialHtml: string }) {
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
 
@@ -160,26 +160,26 @@ export default function Editor({ initialHtml }: { initialHtml: string }) {
 
     inputValueRef.current = input.value;
 
-    if (e.key !== 'Enter' || !inputValueRef.current) return;
+    if (e.key !== "Enter" || !inputValueRef.current) return;
     e.preventDefault();
     if (!selectedElement || !resultsRef.current) return;
     try {
       // Create temporary element to strip style attributes
-      const temp = document.createElement('div');
+      const temp = document.createElement("div");
       temp.innerHTML = selectedElement.outerHTML;
       const elementWithoutStyle = temp.firstElementChild;
       if (elementWithoutStyle) {
-        elementWithoutStyle.removeAttribute('style');
+        elementWithoutStyle.removeAttribute("style");
       }
 
-      console.log('Making change:', {
+      console.log("Making change:", {
         text: inputValueRef.current,
         element: {
           html: elementWithoutStyle?.outerHTML || selectedElement.outerHTML,
           tagName: selectedElement.tagName,
-          textContent: selectedElement.textContent || ''
+          textContent: selectedElement.textContent || "",
         },
-        fullHtml: resultsRef.current.innerHTML
+        fullHtml: resultsRef.current.innerHTML,
       });
 
       const updatedHtml = await updateElement(
@@ -187,19 +187,19 @@ export default function Editor({ initialHtml }: { initialHtml: string }) {
         {
           html: elementWithoutStyle?.outerHTML || selectedElement.outerHTML,
           tagName: selectedElement.tagName,
-          textContent: selectedElement.textContent || ''
+          textContent: selectedElement.textContent || "",
         },
-        resultsRef.current.innerHTML
+        resultsRef.current.innerHTML,
       );
 
       setCurrentHtml(updatedHtml);
 
       setIsEditing(false);
-      input.value = '';
-      inputValueRef.current = '';
+      input.value = "";
+      inputValueRef.current = "";
       setSelectedElement(null);
     } catch (error) {
-      console.error('Failed to update element:', error);
+      console.error("Failed to update element:", error);
     }
   };
 
@@ -233,7 +233,7 @@ export default function Editor({ initialHtml }: { initialHtml: string }) {
     `);
     iframeDoc.close();
 
-    const input = iframeDoc.querySelector('input');
+    const input = iframeDoc.querySelector("input");
     if (!input) return;
     input.focus();
 
@@ -242,71 +242,71 @@ export default function Editor({ initialHtml }: { initialHtml: string }) {
       inputValueRef.current = (e.target as HTMLInputElement).value;
     };
 
-    input.addEventListener('input', handleInput);
-    input.addEventListener('keydown', handleInputKeyDown);
+    input.addEventListener("input", handleInput);
+    input.addEventListener("keydown", handleInputKeyDown);
 
     return () => {
-      input.removeEventListener('input', handleInput);
-      input.removeEventListener('keydown', handleInputKeyDown);
+      input.removeEventListener("input", handleInput);
+      input.removeEventListener("keydown", handleInputKeyDown);
     };
   }, [isEditing, selectedElement]);
 
   // Add selection change listener
   useEffect(() => {
-    document.addEventListener('selectionchange', handleSelection);
+    document.addEventListener("selectionchange", handleSelection);
     return () => {
-      document.removeEventListener('selectionchange', handleSelection);
+      document.removeEventListener("selectionchange", handleSelection);
     };
   }, []);
 
   return (
     <div className="min-h-screen bg-[#f4f4f0] dark:bg-black dark:text-white">
-      <div ref={resultsRef} className="relative w-full min-h-screen p-4">
+      <div ref={resultsRef} className="relative min-h-screen w-full p-4">
         <div dangerouslySetInnerHTML={{ __html: currentHtml }} />
       </div>
 
       {!isEditing && (
-        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 flex items-center gap-1 text-sm text-gray-500">
-          <kbd className="px-2 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg dark:bg-gray-600 dark:text-gray-100 dark:border-gray-500">
+        <div className="fixed bottom-4 left-1/2 flex -translate-x-1/2 transform items-center gap-1 text-sm text-gray-500">
+          <kbd className="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-800 dark:border-gray-500 dark:bg-gray-600 dark:text-gray-100">
             ⌘
           </kbd>
-          <kbd className="px-2 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg dark:bg-gray-600 dark:text-gray-100 dark:border-gray-500">
+          <kbd className="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-800 dark:border-gray-500 dark:bg-gray-600 dark:text-gray-100">
             K
           </kbd>
           <span>
-            or <span style={{ backgroundColor: 'rgb(255, 144, 232)', color: 'black' }}>Highlight</span> or{' '}
-            <span style={{ backgroundColor: 'rgb(255, 144, 232)', color: 'black' }}>Click</span> to make changes
+            or <span style={{ backgroundColor: "rgb(255, 144, 232)", color: "black" }}>Highlight</span> or{" "}
+            <span style={{ backgroundColor: "rgb(255, 144, 232)", color: "black" }}>Click</span> to make changes
           </span>
         </div>
       )}
 
       {isEditing && (
         <div
-          className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700"
+          className="fixed right-0 bottom-0 left-0 border-t border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900"
           style={{
-            height: '86px',
-            padding: '10px'
+            height: "86px",
+            padding: "10px",
           }}
         >
           <iframe
             ref={iframeRef}
-            className="w-full h-[80px] border-0"
+            className="h-[80px] w-full border-0"
             style={{
-              height: '40px'
+              height: "40px",
             }}
           />
           <div className="absolute top-[50px] flex flex-col items-center">
             <div className="flex items-center gap-1">
               {inputValueRef.current ? (
                 <>
-                  <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+                  <kbd className="bg-muted text-muted-foreground pointer-events-none inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none">
                     <span className="text-xs">return</span>
                   </kbd>
                   <span className="text-sm">to make change</span>
                 </>
               ) : (
                 <>
-                  <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+                  <kbd className="bg-muted text-muted-foreground pointer-events-none inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none">
                     <span className="text-xs">esc</span>
                   </kbd>
                   <span className="text-sm">to close</span>
