@@ -95,7 +95,7 @@ export default function Editor({ initialHtml }: { initialHtml: string }) {
       const contentElement = elements.find((el) => {
         if (!(el instanceof HTMLElement)) return false;
         if (!resultsRef.current?.contains(el)) return false;
-        return ['DIV', 'H1', 'H2', 'P', 'BUTTON', 'A', 'LI'].includes(el.tagName);
+        return ['DIV', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'P', 'BUTTON', 'A', 'LI'].includes(el.tagName);
       }) as HTMLElement | undefined;
       if (!contentElement) return;
       e.preventDefault();
