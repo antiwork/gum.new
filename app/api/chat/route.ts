@@ -3,7 +3,7 @@ import { openai } from "@ai-sdk/openai";
 import { streamObject } from "ai";
 import { z } from "zod";
 import { createGum } from "@/services/gums";
-import { getLandingPagePrompt } from '@/lib/prompts';
+import { generateLandingPagePrompt } from '@/lib/prompts';
 
 export const maxDuration = 30;
 
@@ -14,7 +14,7 @@ export async function POST(req: Request) {
   const { messages } = await req.json();
   const lastMessage = messages[messages.length - 1].content;
 
-  const prompt = getLandingPagePrompt(lastMessage);
+  const prompt = generateLandingPagePrompt(lastMessage);
 
   if (DEBUG_MODE) {
     await new Promise((resolve) => setTimeout(resolve, 1250));
