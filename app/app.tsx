@@ -16,9 +16,6 @@ export default function App({ isAuthenticated }: { isAuthenticated: boolean }) {
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    const savedAbout = localStorage.getItem("about") || defaultText;
-    setAbout(savedAbout);
-
     let index = 0;
     let typeInterval: NodeJS.Timeout;
 
