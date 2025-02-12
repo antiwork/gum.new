@@ -7,7 +7,7 @@ Your response should:
 - Include responsive design classes
 - Preserve existing Tailwind classes when present`;
 
-export function getLandingPagePrompt(purpose: string) {
+export function generateLandingPagePrompt(purpose: string) {
   return `${BASE_PROMPT}
     
     Generate a compelling landing page for the following purpose:
