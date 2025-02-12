@@ -5,6 +5,7 @@ export type Gum = typeof schema.gums.$inferSelect;
 export type Version = typeof schema.versions.$inferSelect;
 
 export interface CreateGumInput {
+  userId: string;
   title: string;
   version: {
     html: string;
@@ -18,7 +19,13 @@ export interface CreateGumOutput {
 }
 
 export async function createGum(input: CreateGumInput): Promise<CreateGumOutput> {
-  const [gum] = await db.insert(schema.gums).values({ title: input.title }).returning();
+  const [gum] = await db
+    .insert(schema.gums)
+    .values({
+      userId: input.userId,
+      title: input.title,
+    })
+    .returning();
 
   if (!gum) {
     throw new Error("Failed to create gum");
