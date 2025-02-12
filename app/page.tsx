@@ -8,10 +8,12 @@ import Logo from "./components/Logo";
 
 export default function Home() {
   const [about, setAbout] = useState("");
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [status, setStatus] = useState<"initial" | "generating" | "finished">(
+    "initial"
+  );
   const defaultText = "a landing page to sell a digital product on ";
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
     const savedAbout = localStorage.getItem("about") || defaultText;
     setAbout(savedAbout);
@@ -52,10 +54,9 @@ export default function Home() {
       },
     ];
 
-    setIsGenerating(true);
+    setStatus("generating");
 
     try {
-      setIsLoading(true);
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: {
@@ -67,10 +68,13 @@ export default function Home() {
       });
 
       const { id } = await response.json();
-      redirect(`/gum/${id}`);
-    } finally {
-      setIsGenerating(false);
-      setIsLoading(false);
+      setStatus("finished");
+      setTimeout(() => {
+        redirect(`/gum/${id}`);
+      }, 1000);
+    } catch (error) {
+      console.error("Error generating content:", error);
+      setStatus("initial");
     }
   };
 
@@ -79,7 +83,9 @@ export default function Home() {
       <div className="absolute top-4 left-4">
         <Logo />
       </div>
-      {isLoading ? <Loader /> : null}
+      {status !== "initial" ? (
+        <Loader isDoneLoading={status === "finished"} />
+      ) : null}
       <form
         onSubmit={handleSubmit}
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 text-6xl font-bold px-8 w-full max-w-[61%] sm:w-[calc(100%-4rem)] leading-2 text-black dark:text-white font-['Helvetica Neue',Helvetica,Arial,sans-serif]"
@@ -107,9 +113,9 @@ export default function Home() {
           type="submit"
           variant="outline"
           className="text-5xl mt-8 font-bold p-8 w-full rounded-full border-4 border-black dark:border-white bg-black dark:bg-black text-white dark:text-white hover:bg-white hover:text-black dark:hover:bg-white dark:hover:text-black transition-colors cursor-pointer"
-          disabled={isGenerating}
+          disabled={status === "generating"}
         >
-          {isGenerating ? "Creating..." : "Create"}
+          {status === "generating" ? "Creating..." : "Create"}
         </Button>
       </form>
     </div>

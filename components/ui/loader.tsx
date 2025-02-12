@@ -5,10 +5,9 @@ import { useEffect, useRef, useState } from "react";
 import Matter from "matter-js";
 
 const COIN_SIZE = 100;
-const ADD_COIN_INTERVAL = 50; // Reduced from 100 to 50 to add coins faster
-const LOADING_DURATION = 10000; // 10 seconds
+const ADD_COIN_INTERVAL = 50;
 
-export const Loader: React.FC = () => {
+export const Loader = ({ isDoneLoading }: { isDoneLoading: boolean }) => {
   const sceneRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<Matter.Engine | null>(null);
   const [coins, setCoins] = useState<Matter.Body[]>([]);
@@ -106,13 +105,6 @@ export const Loader: React.FC = () => {
 
     engineRef.current = engine;
 
-    // Remove floor after loading duration
-    setTimeout(() => {
-      if (engineRef.current && wallsRef.current) {
-        Matter.World.remove(engineRef.current.world, wallsRef.current[0]); // Remove only the floor
-      }
-    }, LOADING_DURATION);
-
     return () => {
       Matter.Render.stop(render);
       Matter.World.clear(world, false);
@@ -171,19 +163,20 @@ export const Loader: React.FC = () => {
       setCoins((prevCoins) => [...prevCoins, newCoin]);
     }, ADD_COIN_INTERVAL);
 
-    // Clear interval after loading duration
-    const timeoutId = setTimeout(() => {
-      clearInterval(interval);
-    }, LOADING_DURATION);
+    // Removed interval clearance timeout
 
     return () => {
       clearInterval(interval);
-      clearTimeout(timeoutId);
     };
   }, [coins]);
 
-  return (
-    <div ref={sceneRef} className="fixed inset-0 z-50">
-    </div>
-  );
+  // Only change here: use isLoading instead of the previous loadingComplete prop to trigger floor removal.
+  useEffect(() => {
+    if (isDoneLoading && engineRef.current && wallsRef.current.length) {
+      // Remove the floor so coins can fall away when loading is finished
+      Matter.World.remove(engineRef.current.world, wallsRef.current[0]);
+    }
+  }, [isDoneLoading]);
+
+  return <div ref={sceneRef} className="fixed inset-0 z-50"></div>;
 };
