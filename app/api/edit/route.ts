@@ -2,6 +2,7 @@ import { anthropic } from '@ai-sdk/anthropic';
 import { openai } from '@ai-sdk/openai';
 import { streamObject } from 'ai';
 import { z } from 'zod';
+import { getEditPrompt } from '@/lib/prompts';
 
 export const maxDuration = 30;
 
@@ -10,19 +11,7 @@ export async function POST(req: Request) {
 
   console.log('Received request:', { text, element });
 
-  const prompt = `You are an expert web developer. Given an HTML element and a user's requested change, 
-      generate the updated HTML for that element. The changes should:
-      - Preserve all existing Tailwind CSS classes exactly as they are
-      - Only add new Tailwind classes if necessary for the requested change
-      - Keep the same basic structure
-      - Only modify the element as needed based on the user's request
-      - Ensure the HTML is valid and semantic
-      - Return ONLY the HTML element without doctype or surrounding tags
-
-      Original element: ${element.html}
-      User's requested change: "${text}"
-
-      Return only the updated HTML for this element, nothing else.`;
+  const prompt = getEditPrompt(text, element.html);
 
   const { partialObjectStream } = streamObject({
     model: anthropic('claude-3-5-sonnet-20241022') || openai('gpt-4o-mini'),
@@ -68,3 +57,4 @@ export async function POST(req: Request) {
     }
   );
 }
+
