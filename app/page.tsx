@@ -5,15 +5,16 @@ import { useEffect, useState, useRef } from "react";
 import { redirect } from "next/navigation";
 import { Loader } from "@/components/ui/loader";
 import Logo from "./components/Logo";
+import { useSession, signIn } from "next-auth/react";
 
 export default function Home() {
+  const { data: session } = useSession();
   const [about, setAbout] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [landingPage, setLandingPage] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Add login state
   const defaultText = "a landing page to sell a digital product on ";
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
     let index = 0;
     let typeInterval: NodeJS.Timeout;
@@ -114,17 +115,14 @@ export default function Home() {
 
   return (
     <div className="relative">
-      {/* Show logged in content behind with blur */}
-      <div className={`${!isLoggedIn ? "opacity-80 blur-sm" : ""}`}>
+      <div className={`${!session ? "opacity-80 blur-sm" : ""}`}>
         {loggedInContent}
       </div>
-
-      {/* Show login overlay if not logged in */}
-      {!isLoggedIn && (
+      {!session && (
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="absolute inset-0 bg-[rgba(255,144,232,0.8)] backdrop-blur-sm" />
           <Button
-            onClick={() => setIsLoggedIn(true)}
+            onClick={() => signIn("gumroad")}
             className="cursor-pointer relative z-10 text-5xl font-bold p-8 rounded-full border-4 border-black dark:border-white bg-white text-black hover:bg-black hover:text-white transition-colors"
           >
             Login with Gumroad

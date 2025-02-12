@@ -17,6 +17,8 @@ const envSchema = z.object({
   NODE_ENV: z
     .enum(["development", "production", "test"])
     .default("development"),
+  GUMROAD_OAUTH_CLIENT_ID: z.string(),
+  GUMROAD_OAUTH_CLIENT_SECRET: z.string(),
 });
 
 export const env = Object.freeze(envSchema.parse(process.env));
