@@ -17,13 +17,8 @@ export interface CreateGumOutput {
   version: Version;
 }
 
-export async function createGum(
-  input: CreateGumInput
-): Promise<CreateGumOutput> {
-  const [gum] = await db
-    .insert(schema.gums)
-    .values({ title: input.title })
-    .returning();
+export async function createGum(input: CreateGumInput): Promise<CreateGumOutput> {
+  const [gum] = await db.insert(schema.gums).values({ title: input.title }).returning();
 
   if (!gum) {
     throw new Error("Failed to create gum");
