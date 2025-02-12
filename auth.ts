@@ -2,8 +2,17 @@ import type { GetServerSidePropsContext, NextApiRequest, NextApiResponse } from 
 import type { NextAuthOptions } from "next-auth";
 import { getServerSession } from "next-auth";
 import { env } from "./lib/env";
+import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import db from "@/db";
+import * as schema from "@/db/schema";
 
 export const authOptions: NextAuthOptions = {
+  adapter: DrizzleAdapter(db, {
+    usersTable: schema.users,
+    accountsTable: schema.accounts,
+    sessionsTable: schema.sessions,
+    verificationTokensTable: schema.verificationTokens,
+  }),
   providers: [
     {
       id: "gumroad",
@@ -29,6 +38,12 @@ export const authOptions: NextAuthOptions = {
       },
     },
   ],
+  callbacks: {
+    session: async ({ session, user }) => {
+      session.user.id = user.id;
+      return session;
+    },
+  },
 };
 
 // Use it in server contexts

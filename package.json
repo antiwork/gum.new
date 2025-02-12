@@ -16,6 +16,7 @@
   "dependencies": {
     "@ai-sdk/anthropic": "^1.1.6",
     "@ai-sdk/openai": "^1.1.9",
+    "@auth/drizzle-adapter": "^1.7.4",
     "@radix-ui/react-select": "^2.1.5",
     "@radix-ui/react-slot": "^1.1.1",
     "@vercel/analytics": "^1.4.1",
