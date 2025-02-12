@@ -27,10 +27,7 @@ export default function App({ isAuthenticated }: { isAuthenticated: boolean }) {
       } else {
         if (inputRef.current) {
           inputRef.current.focus();
-          inputRef.current.setSelectionRange(
-            defaultText.length,
-            defaultText.length
-          );
+          inputRef.current.setSelectionRange(defaultText.length, defaultText.length);
         }
       }
     };
@@ -85,7 +82,7 @@ export default function App({ isAuthenticated }: { isAuthenticated: boolean }) {
       ) : null}
       <form
         onSubmit={handleSubmit}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 text-6xl font-bold px-8 w-full max-w-[61%] sm:w-[calc(100%-4rem)] leading-2 text-black dark:text-white font-['Helvetica Neue',Helvetica,Arial,sans-serif]"
+        className="font-['Helvetica Neue',Helvetica,Arial,sans-serif] absolute top-1/2 left-1/2 z-10 w-full max-w-[61%] -translate-x-1/2 -translate-y-1/2 px-8 text-6xl leading-2 font-bold text-black sm:w-[calc(100%-4rem)] dark:text-white"
         style={{ lineHeight: "150%" }}
       >
         I want to make
@@ -93,7 +90,7 @@ export default function App({ isAuthenticated }: { isAuthenticated: boolean }) {
           ref={inputRef}
           name="about"
           placeholder="..."
-          className="block w-full mt-2 text-6xl rounded-[20px] border-4 dark:text-black dark:border-white border-black py-6 px-6 resize-none"
+          className="mt-2 block w-full resize-none rounded-[20px] border-4 border-black px-6 py-6 text-6xl dark:border-white dark:text-black"
           value={about}
           style={{
             backgroundColor: "rgba(255, 144, 232)",
@@ -106,7 +103,7 @@ export default function App({ isAuthenticated }: { isAuthenticated: boolean }) {
         <Button
           type="submit"
           variant="outline"
-          className="text-5xl mt-8 font-bold p-8 w-full rounded-full border-4 border-black dark:border-white bg-black dark:bg-black text-white dark:text-white hover:bg-white hover:text-black dark:hover:bg-white dark:hover:text-black transition-colors cursor-pointer"
+          className="mt-8 w-full cursor-pointer rounded-full border-4 border-black bg-black p-8 text-5xl font-bold text-white transition-colors hover:bg-white hover:text-black dark:border-white dark:bg-black dark:text-white dark:hover:bg-white dark:hover:text-black"
           disabled={status === "generating"}
         >
           {status === "generating" ? "Creating..." : "Create"}
@@ -117,15 +114,13 @@ export default function App({ isAuthenticated }: { isAuthenticated: boolean }) {
 
   return (
     <div className="relative">
-      <div className={`${!isAuthenticated ? "opacity-80 blur-sm" : ""}`}>
-        {loggedInContent}
-      </div>
+      <div className={`${!isAuthenticated ? "opacity-80 blur-sm" : ""}`}>{loggedInContent}</div>
       {!isAuthenticated && (
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="absolute inset-0 bg-[rgba(255,144,232,0.8)] backdrop-blur-sm" />
           <Button
             onClick={() => signIn("gumroad")}
-            className="cursor-pointer relative z-10 text-5xl font-bold p-8 rounded-full border-4 border-black dark:border-white bg-white text-black hover:bg-black hover:text-white transition-colors"
+            className="relative z-10 cursor-pointer rounded-full border-4 border-black bg-white p-8 text-5xl font-bold text-black transition-colors hover:bg-black hover:text-white dark:border-white"
           >
             Login with Gumroad
           </Button>

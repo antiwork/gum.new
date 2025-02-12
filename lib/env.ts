@@ -14,9 +14,7 @@ const envSchema = z.object({
   SUPABASE_JWT_SECRET: z.string(),
   SUPABASE_SERVICE_ROLE_KEY: z.string(),
   SUPABASE_URL: z.string().url(),
-  NODE_ENV: z
-    .enum(["development", "production", "test"])
-    .default("development"),
+  NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
   GUMROAD_OAUTH_CLIENT_ID: z.string(),
   GUMROAD_OAUTH_CLIENT_SECRET: z.string(),
 });
