@@ -6,6 +6,7 @@ import { editLandingPagePrompt } from "@/lib/prompts";
 import { createVersion } from "@/services/versions";
 import { auth } from "@/auth";
 import db from "@/db";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 export const maxDuration = 30;
 
@@ -48,9 +49,12 @@ export async function POST(req: Request) {
     throw new Error("Invalid HTML response from AI");
   }
 
+  // Sanitize the AI-generated HTML, blocking any JavaScript execution vectors
+  const sanitizedHtml = sanitizeHtml(updatedHtml);
+
   const normalizedOriginal = element.html.replace(/\s+/g, " ").trim();
   const normalizedFullHtml = fullHtml.replace(/\s+/g, " ").trim();
-  const newHtml = normalizedFullHtml.replace(normalizedOriginal, updatedHtml);
+  const newHtml = normalizedFullHtml.replace(normalizedOriginal, sanitizedHtml);
 
   const version = await createVersion({
     html: newHtml,
