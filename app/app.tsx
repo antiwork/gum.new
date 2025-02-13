@@ -157,28 +157,35 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
             <div className="mt-8 text-6xl">to sell</div>
             <div className="relative">
               {!isNewProduct ? (
-                <select
-                  name="product"
-                  value={selectedProduct}
-                  onChange={(e) => {
-                    if (e.target.value === "new") {
-                      setIsNewProduct(true);
-                    } else {
-                      setSelectedProduct(e.target.value);
-                    }
-                  }}
-                  className="mt-4 block w-full appearance-none rounded-[20px] border-4 border-black px-6 py-6 text-6xl dark:border-white dark:text-black"
-                  style={{
-                    backgroundColor: "rgba(255, 201, 0)",
-                  }}
-                >
-                  {products.map((product: Product) => (
-                    <option key={product.id} value={product.id}>
-                      {product.name}
-                    </option>
-                  ))}
-                  <option value="new">A totally new product</option>
-                </select>
+                <>
+                  <select
+                    name="product"
+                    value={selectedProduct}
+                    onChange={(e) => {
+                      if (e.target.value === "new") {
+                        setIsNewProduct(true);
+                      } else {
+                        setSelectedProduct(e.target.value);
+                      }
+                    }}
+                    className="mt-4 block w-full appearance-none rounded-[20px] border-4 border-black px-6 py-6 text-6xl dark:border-white dark:text-black"
+                    style={{
+                      backgroundColor: "rgba(255, 201, 0)",
+                    }}
+                  >
+                    {products.map((product: Product) => (
+                      <option key={product.id} value={product.id}>
+                        {product.name}
+                      </option>
+                    ))}
+                    <option value="new">A totally new product</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-8">
+                    <svg className="h-12 w-12 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                      <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                    </svg>
+                  </div>
+                </>
               ) : (
                 <input
                   type="text"
@@ -190,13 +197,9 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
                   style={{
                     backgroundColor: "rgba(255, 201, 0)",
                   }}
+                  autoFocus
                 />
               )}
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-8">
-                <svg className="h-12 w-12 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                  <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-                </svg>
-              </div>
             </div>
           </>
         )}
