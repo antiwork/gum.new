@@ -3,13 +3,28 @@ import { openai } from "@ai-sdk/openai";
 import { streamObject } from "ai";
 import { z } from "zod";
 import { editLandingPagePrompt } from "@/lib/prompts";
+import { createVersion } from "@/services/versions";
+import { auth } from "@/auth";
+import db from "@/db";
 
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
-  const { text, element, fullHtml } = await req.json();
+  const session = await auth();
+  const userId = session?.user.id;
+  if (!userId) {
+    return new Response("Unauthorized", { status: 401 });
+  }
 
-  console.log("Received request:", { text, element });
+  const { text, element, fullHtml, gumId, versionId } = await req.json();
+
+  const gum = await db.query.gums.findFirst({
+    where: (gums, { eq }) => eq(gums.id, gumId),
+  });
+
+  if (!gum || gum.userId !== userId) {
+    return new Response("Unauthorized", { status: 401 });
+  }
 
   const prompt = editLandingPagePrompt(text, element.html);
 
@@ -29,30 +44,29 @@ export async function POST(req: Request) {
     }
   }
 
-  // Validate that we got HTML back
   if (!updatedHtml.startsWith("<")) {
     throw new Error("Invalid HTML response from AI");
   }
 
-  console.log("Original element:", element.html);
-  console.log("AI response:", updatedHtml);
-
-  // Normalize whitespace and trim both strings to ensure reliable replacement
   const normalizedOriginal = element.html.replace(/\s+/g, " ").trim();
   const normalizedFullHtml = fullHtml.replace(/\s+/g, " ").trim();
   const newHtml = normalizedFullHtml.replace(normalizedOriginal, updatedHtml);
 
+  const version = await createVersion({
+    html: newHtml,
+    prompt,
+    gumId,
+    parentId: versionId,
+  });
+
   return new Response(
     JSON.stringify({
-      html: newHtml,
+      html: version.html,
       success: true,
     }),
     {
       headers: {
         "Content-Type": "application/json",
-        "Cache-Control": "no-cache, no-store, must-revalidate",
-        Pragma: "no-cache",
-        Expires: "0",
       },
     },
   );
