@@ -62,13 +62,13 @@ export default function App({ isAuthenticated }: { isAuthenticated: boolean }) {
       });
 
       const { id } = await response.json();
-      setStatus("finished");
-      setTimeout(() => {
-        redirect(`/gum/${id}`);
-      }, 1000);
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      redirect(`/gum/${id}`);
     } catch (error) {
       console.error("Error generating content:", error);
       setStatus("initial");
+    } finally {
+      setStatus("finished");
     }
   };
 

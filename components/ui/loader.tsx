@@ -5,9 +5,9 @@ import { useEffect, useRef, useState } from "react";
 import Matter from "matter-js";
 
 const COIN_SIZE = 100;
-const ADD_COIN_INTERVAL = 50;
+const ADD_COIN_INTERVAL = 50; // Reduced from 100 to 50 to add coins faster
 
-export const Loader = ({ isDoneLoading }: { isDoneLoading: boolean }) => {
+export const Loader: React.FC<{ isDoneLoading?: boolean }> = ({ isDoneLoading = false }) => {
   const sceneRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<Matter.Engine | null>(null);
   const [coins, setCoins] = useState<Matter.Body[]>([]);
@@ -51,14 +51,26 @@ export const Loader = ({ isDoneLoading }: { isDoneLoading: boolean }) => {
 
     // add walls with more bounce - only sides and floor
     const walls = [
-      Matter.Bodies.rectangle(window.innerWidth / 2, window.innerHeight + COIN_SIZE, window.innerWidth, COIN_SIZE * 2, {
-        isStatic: true,
-        restitution: 0.6,
-      }),
-      Matter.Bodies.rectangle(-COIN_SIZE, window.innerHeight / 2, COIN_SIZE * 2, window.innerHeight, {
-        isStatic: true,
-        restitution: 0.6,
-      }),
+      Matter.Bodies.rectangle(
+        window.innerWidth / 2,
+        window.innerHeight + COIN_SIZE,
+        window.innerWidth,
+        COIN_SIZE * 2,
+        {
+          isStatic: true,
+          restitution: 0.6,
+        }
+      ),
+      Matter.Bodies.rectangle(
+        -COIN_SIZE,
+        window.innerHeight / 2,
+        COIN_SIZE * 2,
+        window.innerHeight,
+        {
+          isStatic: true,
+          restitution: 0.6,
+        }
+      ),
       Matter.Bodies.rectangle(
         window.innerWidth + COIN_SIZE,
         window.innerHeight / 2,
@@ -67,7 +79,7 @@ export const Loader = ({ isDoneLoading }: { isDoneLoading: boolean }) => {
         {
           isStatic: true,
           restitution: 0.6,
-        },
+        }
       ),
     ];
 
@@ -98,19 +110,30 @@ export const Loader = ({ isDoneLoading }: { isDoneLoading: boolean }) => {
       Matter.World.clear(world, false);
       Matter.Engine.clear(engine);
       render.canvas.remove();
-      // Create a new canvas element instead of setting to null
       render.canvas = document.createElement("canvas");
       render.context = render.canvas.getContext("2d")!;
       render.textures = {};
     };
   }, []);
 
+  // Add new effect to watch for shouldDrop
+  useEffect(() => {
+    if (!engineRef.current || !wallsRef.current) return;
+    if (!isDoneLoading) {
+      Matter.World.remove(engineRef.current.world, wallsRef.current[0]); // Remove the floor
+    } else {
+      Matter.World.add(engineRef.current.world, wallsRef.current[0]); // Add the floor
+    }
+  }, [isDoneLoading]);
+
   useEffect(() => {
     if (!engineRef.current) return;
 
     const interval = setInterval(() => {
       // Check if any coins are above the viewport
-      const hasSpaceForMoreCoins = coins.every((coin) => coin.position.y > COIN_SIZE);
+      const hasSpaceForMoreCoins = coins.every(
+        (coin) => coin.position.y > COIN_SIZE
+      );
 
       if (!hasSpaceForMoreCoins) {
         return;
@@ -154,12 +177,8 @@ export const Loader = ({ isDoneLoading }: { isDoneLoading: boolean }) => {
     };
   }, [coins]);
 
-  useEffect(() => {
-    if (isDoneLoading && engineRef.current && wallsRef.current.length) {
-      // Remove the floor so coins can fall away when loading is finished
-      Matter.World.remove(engineRef.current.world, wallsRef.current[0]);
-    }
-  }, [isDoneLoading]);
-
-  return <div ref={sceneRef} className="fixed inset-0 z-50"></div>;
+  return (
+    <div ref={sceneRef} className="fixed inset-0 z-50">
+    </div>
+  );
 };
