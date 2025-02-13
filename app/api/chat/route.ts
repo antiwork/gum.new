@@ -39,9 +39,7 @@ export async function POST(req: Request) {
     model: anthropic("claude-3-5-sonnet-20241022") || openai("gpt-4o-mini"),
     temperature: 0.7,
     schema: z.object({
-      landingPage: z.string().describe(
-        "A landing page using HTML with Tailwind CSS classes"
-      ),
+      landingPage: z.string().describe("A landing page using HTML with Tailwind CSS classes"),
     }),
     prompt,
   });
