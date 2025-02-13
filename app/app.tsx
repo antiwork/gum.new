@@ -7,11 +7,62 @@ import { Loader } from "@/components/ui/loader";
 import Logo from "./components/Logo";
 import { signIn } from "next-auth/react";
 
-export default function App({ isAuthenticated }: { isAuthenticated: boolean }) {
+export type Product = {
+  name: string;
+  preview_url: string | null;
+  description: string | null;
+  customizable_price: boolean;
+  require_shipping: boolean;
+  custom_receipt: string | null;
+  custom_permalink: string | null;
+  subscription_duration: string | null;
+  id: string;
+  url: string | null;
+  price: number;
+  currency: string;
+  short_url: string;
+  thumbnail_url: string | null;
+  tags: string[];
+  formatted_price: string;
+  published: boolean;
+  file_info: Record<string, any>;
+  max_purchase_count: number | null;
+  deleted: boolean;
+  custom_fields: any[];
+  custom_summary: string | null;
+  is_tiered_membership: boolean;
+  recurrences: string[] | null;
+  variants: Variant[];
+  purchasing_power_parity_prices: { [country: string]: number };
+};
+
+export type Variant = {
+  title: string;
+  options: Option[];
+};
+
+export type Option = {
+  name: string;
+  price_difference: number;
+  is_pay_what_you_want: boolean;
+  recurrence_prices: RecurrencePrices | null;
+  url: string | null;
+};
+
+export type RecurrencePrices = {
+  [recurrence: string]: {
+    price_cents: number;
+    suggested_price_cents: number | null;
+  };
+};
+
+export default function App({ isAuthenticated, products }: { isAuthenticated: boolean; products: Product[] }) {
   const [about, setAbout] = useState("");
   const [status, setStatus] = useState<"initial" | "generating" | "finished">("initial");
+  const [selectedProduct, setSelectedProduct] = useState(products?.[0]?.id || "");
   const defaultText = "a landing page to sell a digital product on ";
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  console.log(products);
 
   useEffect(() => {
     let index = 0;
@@ -96,6 +147,33 @@ export default function App({ isAuthenticated }: { isAuthenticated: boolean }) {
           }}
           onChange={(e) => setAbout(e.target.value)}
         />
+        {products && products.length > 0 && (
+          <>
+            <div className="mt-8 text-6xl">from product</div>
+            <div className="relative">
+              <select
+                name="product"
+                value={selectedProduct}
+                onChange={(e) => setSelectedProduct(e.target.value)}
+                className="mt-4 block w-full appearance-none rounded-[20px] border-4 border-black px-6 py-6 text-6xl dark:border-white dark:text-black"
+                style={{
+                  backgroundColor: "rgba(255, 144, 232)",
+                }}
+              >
+                {products.map((product: Product) => (
+                  <option key={product.id} value={product.id}>
+                    {product.name}
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-8">
+                <svg className="h-12 w-12 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                  <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                </svg>
+              </div>
+            </div>
+          </>
+        )}
         <Button
           type="submit"
           variant="outline"
