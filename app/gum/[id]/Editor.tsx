@@ -8,15 +8,25 @@ async function updateElement(
     html: string;
     tagName: string;
     textContent: string;
-  },
+  } | null,
   fullHtml: string,
+  gumId: string,
 ) {
-  // Create temporary element to strip style attributes
-  const temp = document.createElement("div");
-  temp.innerHTML = element.html;
-  const elementWithoutStyle = temp.firstElementChild;
-  if (elementWithoutStyle) {
-    elementWithoutStyle.removeAttribute("style");
+  // Only process element if it exists
+  let elementData = element
+    ? {
+        ...element,
+        html: element.html,
+      }
+    : null;
+
+  // If element is null, we're editing the whole page
+  if (!element) {
+    elementData = {
+      html: fullHtml,
+      tagName: "div",
+      textContent: document.body.textContent || "",
+    };
   }
 
   const response = await fetch("/api/edit", {
@@ -26,11 +36,9 @@ async function updateElement(
     },
     body: JSON.stringify({
       text,
-      element: {
-        ...element,
-        html: elementWithoutStyle?.outerHTML || element.html,
-      },
+      element: elementData,
       fullHtml,
+      gumId,
     }),
   });
 
@@ -38,7 +46,7 @@ async function updateElement(
   return data.html;
 }
 
-export default function Editor({ initialHtml }: { initialHtml: string }) {
+export default function Editor({ initialHtml, gumId }: { initialHtml: string; gumId: string }) {
   const [isEditing, setIsEditing] = useState(false);
   const [selectedElement, setSelectedElement] = useState<HTMLElement | null>(null);
   const inputValueRef = useRef("");
@@ -162,34 +170,32 @@ export default function Editor({ initialHtml }: { initialHtml: string }) {
 
     if (e.key !== "Enter" || !inputValueRef.current) return;
     e.preventDefault();
-    if (!selectedElement || !resultsRef.current) return;
-    try {
-      // Create temporary element to strip style attributes
-      const temp = document.createElement("div");
-      temp.innerHTML = selectedElement.outerHTML;
-      const elementWithoutStyle = temp.firstElementChild;
-      if (elementWithoutStyle) {
-        elementWithoutStyle.removeAttribute("style");
-      }
+    if (!resultsRef.current) return;
 
+    try {
       console.log("Making change:", {
         text: inputValueRef.current,
-        element: {
-          html: elementWithoutStyle?.outerHTML || selectedElement.outerHTML,
-          tagName: selectedElement.tagName,
-          textContent: selectedElement.textContent || "",
-        },
+        element: selectedElement
+          ? {
+              html: selectedElement.outerHTML,
+              tagName: selectedElement.tagName,
+              textContent: selectedElement.textContent || "",
+            }
+          : null,
         fullHtml: resultsRef.current.innerHTML,
       });
 
       const updatedHtml = await updateElement(
         inputValueRef.current,
-        {
-          html: elementWithoutStyle?.outerHTML || selectedElement.outerHTML,
-          tagName: selectedElement.tagName,
-          textContent: selectedElement.textContent || "",
-        },
+        selectedElement
+          ? {
+              html: selectedElement.outerHTML,
+              tagName: selectedElement.tagName,
+              textContent: selectedElement.textContent || "",
+            }
+          : null,
         resultsRef.current.innerHTML,
+        gumId,
       );
 
       setCurrentHtml(updatedHtml);
