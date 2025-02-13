@@ -24,5 +24,5 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     notFound();
   }
   const isOwner = gum.userId === userId;
-  return isOwner ? <Editor initialHtml={version.html} /> : <Viewer html={version.html} />;
+  return isOwner ? <Editor initialHtml={version.html} gumId={id} /> : <Viewer html={version.html} />;
 }
