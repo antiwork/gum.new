@@ -262,7 +262,14 @@ export default function Editor({ initialHtml }: { initialHtml: string }) {
   return (
     <div className="min-h-screen bg-[#f4f4f0] dark:bg-black dark:text-white">
       <div ref={resultsRef} className="relative min-h-screen w-full p-4">
-        <div dangerouslySetInnerHTML={{ __html: currentHtml }} />
+        <div
+          dangerouslySetInnerHTML={{
+            __html: `
+              <script src="https://cdn.tailwindcss.com"></script>
+              ${currentHtml}
+            `,
+          }}
+        />
       </div>
 
       {!isEditing && (
