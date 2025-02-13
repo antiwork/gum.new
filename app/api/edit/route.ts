@@ -6,7 +6,7 @@ import { editLandingPagePrompt } from "@/lib/prompts";
 import { createVersion } from "@/services/versions";
 import { auth } from "@/auth";
 import db from "@/db";
-import sanitizeHtml from "sanitize-html";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 export const maxDuration = 30;
 
@@ -50,17 +50,7 @@ export async function POST(req: Request) {
   }
 
   // Sanitize the AI-generated HTML, blocking any JavaScript execution vectors
-  const sanitizedHtml = sanitizeHtml(updatedHtml, {
-    allowedTags: false, // Allow all tags
-    allowedAttributes: {
-      "*": ["class", "id", "style", "src", "href", "alt", "title"],
-    },
-    disallowedTagsMode: "discard",
-    allowedSchemes: ["http", "https", "mailto"],
-    allowedSchemesByTag: {},
-    allowedSchemesAppliedToAttributes: ["href", "src"],
-    allowProtocolRelative: true,
-  });
+  const sanitizedHtml = sanitizeHtml(updatedHtml);
 
   const normalizedOriginal = element.html.replace(/\s+/g, " ").trim();
   const normalizedFullHtml = fullHtml.replace(/\s+/g, " ").trim();
