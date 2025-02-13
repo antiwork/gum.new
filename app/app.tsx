@@ -9,9 +9,7 @@ import { signIn } from "next-auth/react";
 
 export default function App({ isAuthenticated }: { isAuthenticated: boolean }) {
   const [about, setAbout] = useState("");
-  const [status, setStatus] = useState<"initial" | "generating" | "finished">(
-    "initial"
-  );
+  const [status, setStatus] = useState<"initial" | "generating" | "finished">("initial");
   const defaultText = "a landing page to sell a digital product on ";
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -77,9 +75,7 @@ export default function App({ isAuthenticated }: { isAuthenticated: boolean }) {
       <div className="absolute top-4 left-4">
         <Logo />
       </div>
-      {status !== "initial" ? (
-        <Loader isDoneLoading={status === "finished"} />
-      ) : null}
+      {status !== "initial" ? <Loader isDoneLoading={status === "finished"} /> : null}
       <form
         onSubmit={handleSubmit}
         className="font-['Helvetica Neue',Helvetica,Arial,sans-serif] absolute top-1/2 left-1/2 z-10 w-full max-w-[61%] -translate-x-1/2 -translate-y-1/2 px-8 text-6xl leading-2 font-bold text-black sm:w-[calc(100%-4rem)] dark:text-white"
