@@ -5,6 +5,7 @@ import { z } from "zod";
 import { createGum } from "@/services/gums";
 import { generateLandingPagePrompt } from "@/lib/prompts";
 import { auth } from "@/auth";
+import sanitizeHtml from "sanitize-html";
 
 export const maxDuration = 30;
 const DEBUG_MODE = false;
@@ -52,11 +53,24 @@ export async function POST(req: Request) {
     }
   }
 
+  // Sanitize the AI-generated HTML, blocking any JavaScript execution vectors
+  const sanitizedHtml = sanitizeHtml(landingPage, {
+    allowedTags: false, // Allow all tags
+    allowedAttributes: {
+      "*": ["class", "id", "style", "src", "href", "alt", "title"],
+    },
+    disallowedTagsMode: "discard",
+    allowedSchemes: ["http", "https", "mailto"],
+    allowedSchemesByTag: {},
+    allowedSchemesAppliedToAttributes: ["href", "src"],
+    allowProtocolRelative: true,
+  });
+
   const { gum, version } = await createGum({
     userId,
     title: lastMessage,
     version: {
-      html: landingPage,
+      html: sanitizedHtml,
       prompt,
     },
   });
