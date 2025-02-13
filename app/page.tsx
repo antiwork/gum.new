@@ -67,10 +67,10 @@ export default function Home() {
           messages,
         }),
       });
-    
+
       setShouldDrop(true);
       const { id } = await response.json();
-      await new Promise((resolve) => setTimeout(resolve, 750));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
       redirect(`/gum/${id}`);
     } finally {
       setIsGenerating(false);

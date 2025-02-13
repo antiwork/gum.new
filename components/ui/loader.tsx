@@ -118,8 +118,11 @@ export const Loader: React.FC<{ shouldDrop?: boolean }> = ({ shouldDrop = false 
 
   // Add new effect to watch for shouldDrop
   useEffect(() => {
-    if (shouldDrop && engineRef.current && wallsRef.current) {
-      Matter.World.remove(engineRef.current.world, wallsRef.current[0]); // Remove only the floor
+    if (!engineRef.current || !wallsRef.current) return;
+    if (!shouldDrop) {
+      Matter.World.remove(engineRef.current.world, wallsRef.current[0]); // Remove the floor
+    } else {
+      Matter.World.add(engineRef.current.world, wallsRef.current[0]); // Add the floor
     }
   }, [shouldDrop]);
 
