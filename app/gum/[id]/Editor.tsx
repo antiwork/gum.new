@@ -107,12 +107,12 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
       }) as HTMLElement | undefined;
       if (!contentElement) return;
       e.preventDefault();
-      if (selectedElement) {
-        selectedElement.style.outline = "none";
-      }
+
+      // Create a clone of the element with the style tag since the styles aren't shown in the UI
+      const cleanElement = contentElement.cloneNode(true) as HTMLElement;
+      cleanElement.removeAttribute("style");
+      setSelectedElement(cleanElement);
       contentElement.style.outline = "2px solid rgb(255, 144, 232)";
-      setSelectedElement(contentElement);
-      setIsEditing(true);
     };
 
     document.addEventListener("mousemove", handleMouseMove);
