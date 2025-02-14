@@ -7,7 +7,7 @@ import { generateLandingPagePrompt } from "@/lib/prompts";
 import { auth } from "@/auth";
 import { sanitizeHtml } from "@/lib/sanitize";
 
-export const maxDuration = 30;
+export const maxDuration = 100;
 const DEBUG_MODE = false;
 
 export async function POST(req: Request) {

@@ -8,7 +8,7 @@ import { auth } from "@/auth";
 import db from "@/db";
 import { sanitizeHtml } from "@/lib/sanitize";
 
-export const maxDuration = 30;
+export const maxDuration = 100;
 
 export async function POST(req: Request) {
   const session = await auth();
