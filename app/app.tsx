@@ -115,7 +115,7 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
       const { id } = await response.json();
       setStatus("finished");
       setTimeout(() => {
-        redirect(`/gum/${id}`);
+        window.location.href = `/gum/${id}`;
       }, 1000);
     } catch (error) {
       console.error("Error generating content:", error);
@@ -204,7 +204,7 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
           type="submit"
           variant="outline"
           className="mt-8 w-full cursor-pointer rounded-full border-4 border-black bg-black p-8 text-5xl font-bold text-white transition-colors hover:bg-white hover:text-black dark:border-white dark:bg-black dark:text-white dark:hover:bg-white dark:hover:text-black"
-          disabled={status === "generating"}
+          disabled={status !== "initial"}
         >
           {status === "generating" ? "Creating..." : "Create"}
         </Button>
