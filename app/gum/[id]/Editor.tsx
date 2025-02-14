@@ -49,6 +49,7 @@ async function updateElement(
 export default function Editor({ initialHtml, gumId }: { initialHtml: string; gumId: string }) {
   const [isEditing, setIsEditing] = useState(false);
   const [selectedElement, setSelectedElement] = useState<HTMLElement | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const inputValueRef = useRef("");
 
   const resultsRef = useRef<HTMLDivElement>(null);
@@ -173,6 +174,7 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
     if (!resultsRef.current) return;
 
     try {
+      setIsLoading(true);
       console.log("Making change:", {
         text: inputValueRef.current,
         element: selectedElement
@@ -206,6 +208,8 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
       setSelectedElement(null);
     } catch (error) {
       console.error("Failed to update element:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -309,7 +313,19 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
             />
             <div className="absolute top-[50px] flex flex-col items-center">
               <div className="flex items-center gap-1">
-                {inputValueRef.current ? (
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="relative h-5 w-5">
+                      <img
+                        src="/icon.png"
+                        alt="Loading..."
+                        className="h-full w-full animate-spin"
+                        style={{ animationDuration: "1s" }}
+                      />
+                    </div>
+                    <span className="text-sm">Making changes...</span>
+                  </div>
+                ) : inputValueRef.current ? (
                   <>
                     <kbd className="bg-muted text-muted-foreground pointer-events-none inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none">
                       <span className="text-xs">return</span>
