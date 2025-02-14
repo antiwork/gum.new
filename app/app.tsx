@@ -60,9 +60,10 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
   const [about, setAbout] = useState("");
   const [status, setStatus] = useState<"initial" | "generating" | "finished">("initial");
   const [selectedProduct, setSelectedProduct] = useState(products?.[0]?.id || "");
-  const defaultText = "a landing page to sell a digital product on ";
+  const [isNewProduct, setIsNewProduct] = useState(false);
+  const [newProductDetails, setNewProductDetails] = useState("");
+  const defaultText = "a landing page";
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  console.log(products);
 
   useEffect(() => {
     let index = 0;
@@ -88,12 +89,13 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const form = e.target as HTMLFormElement;
-    const formData = new FormData(form);
 
     const messages = [
       {
-        content: `Make ${formData.get("about")}`,
+        content: `Make ${about}`,
+        productInfo: JSON.stringify(
+          isNewProduct ? newProductDetails : (products?.find((p) => p.id === selectedProduct) ?? ""),
+        ),
       },
     ];
 
@@ -149,28 +151,52 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
         />
         {products && products.length > 0 && (
           <>
-            <div className="mt-8 text-6xl">from product</div>
+            <div className="mt-8 text-6xl">to sell</div>
             <div className="relative">
-              <select
-                name="product"
-                value={selectedProduct}
-                onChange={(e) => setSelectedProduct(e.target.value)}
-                className="mt-4 block w-full appearance-none rounded-[20px] border-4 border-black px-6 py-6 text-6xl dark:border-white dark:text-black"
-                style={{
-                  backgroundColor: "rgba(255, 144, 232)",
-                }}
-              >
-                {products.map((product: Product) => (
-                  <option key={product.id} value={product.id}>
-                    {product.name}
-                  </option>
-                ))}
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-8">
-                <svg className="h-12 w-12 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                  <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-                </svg>
-              </div>
+              {!isNewProduct ? (
+                <>
+                  <select
+                    name="product"
+                    value={selectedProduct}
+                    onChange={(e) => {
+                      if (e.target.value === "new") {
+                        setIsNewProduct(true);
+                      } else {
+                        setSelectedProduct(e.target.value);
+                      }
+                    }}
+                    className="mt-4 block w-full appearance-none rounded-[20px] border-4 border-black px-6 py-6 text-6xl dark:border-white dark:text-black"
+                    style={{
+                      backgroundColor: "rgba(255, 201, 0)",
+                    }}
+                  >
+                    {products.map((product: Product) => (
+                      <option key={product.id} value={product.id}>
+                        {product.name}
+                      </option>
+                    ))}
+                    <option value="new">A totally new product</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-8">
+                    <svg className="h-12 w-12 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                      <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                    </svg>
+                  </div>
+                </>
+              ) : (
+                <input
+                  type="text"
+                  name="newProduct"
+                  value={newProductDetails}
+                  onChange={(e) => setNewProductDetails(e.target.value)}
+                  placeholder="a $50 course with 10 seats on developing with devin"
+                  className="mt-4 block w-full appearance-none rounded-[20px] border-4 border-black px-6 py-6 text-6xl dark:border-white dark:text-black"
+                  style={{
+                    backgroundColor: "rgba(255, 201, 0)",
+                  }}
+                  autoFocus
+                />
+              )}
             </div>
           </>
         )}
