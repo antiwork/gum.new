@@ -47,9 +47,10 @@ async function updateElement(
 }
 
 export default function Editor({ initialHtml, gumId }: { initialHtml: string; gumId: string }) {
-  const [isEditing, setIsEditing] = useState(false);
+  // const [isEditing, setIsEditing] = useState(false);
   const [selectedElement, setSelectedElement] = useState<HTMLElement | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [editState, setEditState] = useState<"idle" | "loading" | "typing">("idle");
   const inputValueRef = useRef("");
 
   const resultsRef = useRef<HTMLDivElement>(null);
@@ -61,7 +62,7 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
   const handleSelection = () => {
     const selection = window.getSelection();
     if (!selection || selection.isCollapsed) return;
-    setIsEditing(true);
+    setEditState("typing");
   };
 
   // Add hover and click handlers for content elements
@@ -69,7 +70,7 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
     if (!resultsRef.current) return;
 
     const handleMouseMove = (e: MouseEvent) => {
-      if (isEditing) return;
+      if (editState !== "idle") return;
 
       // Get the element under cursor
       const elements = document.elementsFromPoint(e.clientX, e.clientY);
@@ -99,7 +100,8 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
     };
 
     const handleClick = (e: MouseEvent) => {
-      if (isEditing) return;
+      if (editState !== "idle") return;
+      setEditState("typing");
       const elements = document.elementsFromPoint(e.clientX, e.clientY);
       const contentElement = elements.find((el) => {
         if (!(el instanceof HTMLElement)) return false;
@@ -123,7 +125,7 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("click", handleClick);
     };
-  }, [isEditing, selectedElement]);
+  }, [editState, selectedElement]);
 
   // Add custom selection color styles
   useEffect(() => {
@@ -140,16 +142,20 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
     };
   }, []);
 
-  // Handle keyboard shortcuts
+  // Handle keyboard shortcuts if the input isn't focused
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Only handle window shortcuts when iframe is not focused
+      const iframeInput = iframeRef.current?.contentDocument?.querySelector("input");
+      if (iframeInput === document.activeElement) return;
+
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        setIsEditing(true);
+        setEditState("typing");
       }
       if (e.key === "Escape") {
         e.preventDefault();
-        setIsEditing(false);
+        setEditState("idle");
         // Remove focus from any active element
         if (document.activeElement instanceof HTMLElement) {
           document.activeElement.blur();
@@ -202,7 +208,7 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
 
       setCurrentHtml(updatedHtml);
 
-      setIsEditing(false);
+      setEditState("idle");
       input.value = "";
       inputValueRef.current = "";
       setSelectedElement(null);
@@ -215,7 +221,7 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
 
   // Update iframe useEffect
   useEffect(() => {
-    if (!isEditing || !iframeRef.current) return;
+    if (editState === "idle" || !iframeRef.current) return;
     const iframeDoc = iframeRef.current.contentDocument;
     if (!iframeDoc) return;
     iframeDoc.open();
@@ -252,14 +258,27 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
       inputValueRef.current = (e.target as HTMLInputElement).value;
     };
 
+    // Handle keyboard shortcuts in the iframe
+    const handleIframeKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setEditState("idle");
+        // Remove focus from any active element
+        if (document.activeElement instanceof HTMLElement) {
+          document.activeElement.blur();
+        }
+      }
+      handleInputKeyDown(e);
+    };
+
     input.addEventListener("input", handleInput);
-    input.addEventListener("keydown", handleInputKeyDown);
+    input.addEventListener("keydown", handleIframeKeyDown);
 
     return () => {
       input.removeEventListener("input", handleInput);
-      input.removeEventListener("keydown", handleInputKeyDown);
+      input.removeEventListener("keydown", handleIframeKeyDown);
     };
-  }, [isEditing, selectedElement]);
+  }, [editState, selectedElement]);
 
   // Add selection change listener
   useEffect(() => {
@@ -281,7 +300,7 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
           />
         </div>
 
-        {!isEditing && (
+        {editState === "idle" && (
           <div className="fixed bottom-4 left-1/2 flex -translate-x-1/2 transform items-center gap-1 text-sm text-gray-500">
             <kbd className="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-800 dark:border-gray-500 dark:bg-gray-600 dark:text-gray-100">
               ⌘
@@ -296,7 +315,7 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
           </div>
         )}
 
-        {isEditing && (
+        {editState === "typing" && (
           <div
             className="fixed right-0 bottom-0 left-0 border-t border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900"
             style={{
