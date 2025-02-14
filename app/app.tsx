@@ -64,7 +64,6 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
   const [newProductDetails, setNewProductDetails] = useState("");
   const defaultText = "a landing page";
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  console.log(products);
 
   useEffect(() => {
     let index = 0;
@@ -90,15 +89,13 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const form = e.target as HTMLFormElement;
-    const formData = new FormData(form);
 
     const messages = [
       {
-        content: `Make ${formData.get("about")}`,
-        productInfo: isNewProduct
-          ? { type: "new", details: newProductDetails }
-          : { type: "existing", id: formData.get("product") },
+        content: `Make ${about}`,
+        productInfo: JSON.stringify(
+          isNewProduct ? newProductDetails : (products?.find((p) => p.id === selectedProduct) ?? ""),
+        ),
       },
     ];
 
