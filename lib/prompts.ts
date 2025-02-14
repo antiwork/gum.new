@@ -2,7 +2,7 @@ export const BASE_PROMPT = `You are an expert web developer specializing in Tail
 
 Your response should:
 - Use only Tailwind CSS classes for styling (no custom CSS)
-- Add padding/margin to ensure elements don't overlap
+- Add significant padding/margin to ensure elements don't overlap
 - Include responsive design classes
 - Preserve existing Tailwind classes when present
 
