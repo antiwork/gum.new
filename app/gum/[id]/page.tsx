@@ -46,8 +46,8 @@ function extractMetadata(html: string) {
   return { title, description, image };
 }
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const { id } = params;
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
   const version = await db.query.versions.findFirst({
     where: (versions, { eq }) => eq(versions.gumId, id),
     orderBy: (versions, { desc }) => [desc(versions.id)],
@@ -86,10 +86,10 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   };
 }
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   const userId = session?.user.id;
-  const { id } = params;
+  const { id } = await params;
   const gum = await db.query.gums.findFirst({
     where: (gums, { eq }) => eq(gums.id, id),
   });
@@ -106,3 +106,24 @@ export default async function Page({ params }: { params: { id: string } }) {
   const isOwner = gum.userId === userId;
   return isOwner ? <Editor initialHtml={version.html} gumId={id} /> : <Viewer html={version.html} />;
 }
+
+// export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+//   const session = await auth();
+//   const userId = session?.user.id;
+//   const { id } = await params;
+//   const gum = await db.query.gums.findFirst({
+//     where: (gums, { eq }) => eq(gums.id, id),
+//   });
+//   if (!gum) {
+//     notFound();
+//   }
+//   const version = await db.query.versions.findFirst({
+//     where: (versions, { eq }) => eq(versions.gumId, id),
+//     orderBy: (versions, { desc }) => [desc(versions.id)],
+//   });
+//   if (!version) {
+//     notFound();
+//   }
+//   const isOwner = gum.userId === userId;
+//   return isOwner ? <Editor initialHtml={version.html} gumId={id} /> : <Viewer html={version.html} />;
+// }
