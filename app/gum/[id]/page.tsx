@@ -86,10 +86,10 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   };
 }
 
-export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+export default async function Page({ params }: { params: { id: string } }) {
   const session = await auth();
   const userId = session?.user.id;
-  const { id } = await params;
+  const { id } = params;
   const gum = await db.query.gums.findFirst({
     where: (gums, { eq }) => eq(gums.id, id),
   });
