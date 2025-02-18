@@ -131,7 +131,7 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
       {status !== "initial" ? <Loader isDoneLoading={status === "finished"} /> : null}
       <form
         onSubmit={handleSubmit}
-        className="font-['Helvetica Neue',Helvetica,Arial,sans-serif] absolute top-1/2 left-1/2 z-10 w-full max-w-[61%] -translate-x-1/2 -translate-y-1/2 px-8 text-6xl leading-2 font-bold text-black sm:w-[calc(100%-4rem)] dark:text-white"
+        className="font-['Helvetica Neue',Helvetica,Arial,sans-serif] absolute top-1/2 left-1/2 z-10 w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 px-4 text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-2 font-bold text-black sm:w-[calc(100%-4rem)] md:max-w-[61%] dark:text-white"
         style={{ lineHeight: "150%" }}
       >
         I want to make
@@ -139,7 +139,7 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
           ref={inputRef}
           name="about"
           placeholder="..."
-          className="mt-2 block w-full resize-none rounded-[20px] border-4 border-black px-6 py-6 text-6xl dark:border-white dark:text-black"
+          className="mt-2 block w-full resize-none rounded-[20px] border-4 border-black px-4 py-4 text-3xl sm:text-4xl md:text-5xl lg:text-6xl sm:px-6 sm:py-6 dark:border-white dark:text-black"
           value={about}
           style={{
             backgroundColor: "rgba(255, 144, 232)",
@@ -165,7 +165,7 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
                         setSelectedProduct(e.target.value);
                       }
                     }}
-                    className="mt-4 block w-full appearance-none rounded-[20px] border-4 border-black px-6 py-6 text-6xl dark:border-white dark:text-black"
+                    className="mt-4 block w-full appearance-none rounded-[20px] border-4 border-black px-4 py-4 text-3xl sm:text-4xl md:text-5xl lg:text-6xl sm:px-6 sm:py-6 dark:border-white dark:text-black"
                     style={{
                       backgroundColor: "rgba(255, 201, 0)",
                     }}
@@ -203,7 +203,7 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
         <Button
           type="submit"
           variant="outline"
-          className="mt-8 w-full cursor-pointer rounded-full border-4 border-black bg-black p-8 text-5xl font-bold text-white transition-colors hover:bg-white hover:text-black dark:border-white dark:bg-black dark:text-white dark:hover:bg-white dark:hover:text-black"
+          className="mt-8 w-full cursor-pointer rounded-full border-4 border-black bg-black p-4 text-2xl sm:text-3xl md:text-4xl lg:text-5xl sm:p-6 md:p-8 font-bold text-white transition-colors hover:bg-white hover:text-black dark:border-white dark:bg-black dark:text-white dark:hover:bg-white dark:hover:text-black"
           disabled={status !== "initial"}
         >
           {status === "generating" ? "Creating..." : "Create"}
