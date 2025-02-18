@@ -220,7 +220,7 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
           <div className="absolute inset-0 bg-[rgba(255,144,232,0.8)] backdrop-blur-sm" />
           <Button
             onClick={() => signIn("gumroad")}
-            className="relative z-10 cursor-pointer rounded-full border-4 border-black bg-white p-8 text-5xl font-bold text-black transition-colors hover:bg-black hover:text-white dark:border-white"
+            className="relative z-10 cursor-pointer rounded-full border-4 border-black bg-white p-4 text-2xl sm:text-3xl md:text-4xl lg:text-5xl sm:p-6 md:p-8 font-bold text-black transition-colors hover:bg-black hover:text-white dark:border-white"
           >
             Login with Gumroad
           </Button>
