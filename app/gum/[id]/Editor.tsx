@@ -310,7 +310,7 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
                 K
               </kbd>
               <span>
-                or <span>Highlight</span> or <span>Click</span> to make changes
+                or <span style={{ backgroundColor: "rgb(255, 144, 232)", color: "black" }}>Highlight</span> or <span style={{ color: "black" }}>Click</span> to make changes
               </span>
             </div>
           </div>
