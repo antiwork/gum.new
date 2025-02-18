@@ -290,7 +290,6 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
 
   return (
     <>
-      {/* eslint-disable-next-line @next/next/no-sync-scripts */}
       <script src="https://cdn.tailwindcss.com"></script>
       <div className="min-h-screen bg-[#f4f4f0] dark:bg-black dark:text-white">
         <div ref={resultsRef} className="relative min-h-screen w-full p-4">
