@@ -292,7 +292,7 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
     <>
       <script src="https://cdn.tailwindcss.com"></script>
       <div className="min-h-screen bg-[#f4f4f0] dark:bg-black dark:text-white">
-        <div ref={resultsRef} className="relative min-h-screen w-full p-4">
+        <div ref={resultsRef} className="relative min-h-screen w-full">
           <div
             dangerouslySetInnerHTML={{
               __html: currentHtml,
@@ -301,17 +301,19 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
         </div>
 
         {editState === "idle" && (
-          <div className="fixed bottom-4 left-1/2 flex -translate-x-1/2 transform items-center gap-1 text-sm text-gray-500">
-            <kbd className="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-800 dark:border-gray-500 dark:bg-gray-600 dark:text-gray-100">
-              ⌘
-            </kbd>
-            <kbd className="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-800 dark:border-gray-500 dark:bg-gray-600 dark:text-gray-100">
-              K
-            </kbd>
-            <span>
-              or <span style={{ backgroundColor: "rgb(255, 144, 232)", color: "black" }}>Highlight</span> or{" "}
-              <span style={{ backgroundColor: "rgb(255, 144, 232)", color: "black" }}>Click</span> to make changes
-            </span>
+          <div className="bg-foreground fixed right-0 bottom-0 left-0 flex">
+            <div className="mx-auto flex transform items-center gap-1 py-2 text-sm text-gray-500 bg-white rounded-full shadow-lg px-4 dark:bg-gray-800">
+              <kbd className="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-800 dark:border-gray-500 dark:bg-gray-600 dark:text-gray-100">
+                ⌘
+              </kbd>
+              <kbd className="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-800 dark:border-gray-500 dark:bg-gray-600 dark:text-gray-100">
+                K
+              </kbd>
+              <span>
+                or <span>Highlight</span> or{" "}
+                <span>Click</span> to make changes
+              </span>
+            </div>
           </div>
         )}
 
