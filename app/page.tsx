@@ -1,6 +1,30 @@
 import App from "./app";
 import { auth } from "@/auth";
 import db from "@/db";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Gum.new",
+  description: "Gum.new is a platform for creating and sharing Gumroad pages.",
+  openGraph: {
+    title: "Gum.new",
+    description: "Gum.new is a platform for creating and sharing Gumroad pages.",
+    images: [
+      {
+        url: "/thumb.png",
+        width: 1200,
+        height: 630,
+        alt: "Gum.new",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Gum.new",
+    description: "Gum.new is a platform for creating and sharing Gumroad pages.",
+    images: ["/thumb.png"],
+  },
+};
 
 export default async function Home() {
   const session = await auth();
