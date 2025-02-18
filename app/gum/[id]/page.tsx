@@ -87,13 +87,13 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 }
 
 interface PageProps {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }
 
 export default async function Page(props: PageProps) {
   const session = await auth();
   const userId = session?.user.id;
-  const { id } = await props.params;
+  const { id } = props.params;
   const gum = await db.query.gums.findFirst({
     where: (gums, { eq }) => eq(gums.id, id),
   });
