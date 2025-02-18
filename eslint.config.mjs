@@ -18,6 +18,11 @@ const eslintConfig = [
     },
     rules: {
       "prettier/prettier": "error",
+      "@typescript-eslint/no-explicit-any": "off",
+      // Allow useEffect dependencies to be any
+      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+      // Allow next no-sync-scripts
+      "next/no-sync-scripts": "off",
     },
   },
 ];
