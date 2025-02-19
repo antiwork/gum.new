@@ -1,7 +1,6 @@
 import App from "./app";
 import { auth } from "@/auth";
 import db from "@/db";
-import { Metadata } from "next";
 
 export default async function Home() {
   const session = await auth();
