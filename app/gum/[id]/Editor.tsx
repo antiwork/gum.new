@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import Image from "next/image";
 
 async function updateElement(
   text: string,
@@ -47,8 +48,10 @@ async function updateElement(
 }
 
 export default function Editor({ initialHtml, gumId }: { initialHtml: string; gumId: string }) {
-  const [isEditing, setIsEditing] = useState(false);
+  // const [isEditing, setIsEditing] = useState(false);
   const [selectedElement, setSelectedElement] = useState<HTMLElement | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [editState, setEditState] = useState<"idle" | "loading" | "typing">("idle");
   const inputValueRef = useRef("");
 
   const resultsRef = useRef<HTMLDivElement>(null);
@@ -60,7 +63,7 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
   const handleSelection = () => {
     const selection = window.getSelection();
     if (!selection || selection.isCollapsed) return;
-    setIsEditing(true);
+    setEditState("typing");
   };
 
   // Add hover and click handlers for content elements
@@ -68,7 +71,7 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
     if (!resultsRef.current) return;
 
     const handleMouseMove = (e: MouseEvent) => {
-      if (isEditing) return;
+      if (editState !== "idle") return;
 
       // Get the element under cursor
       const elements = document.elementsFromPoint(e.clientX, e.clientY);
@@ -98,7 +101,8 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
     };
 
     const handleClick = (e: MouseEvent) => {
-      if (isEditing) return;
+      if (editState !== "idle") return;
+      setEditState("typing");
       const elements = document.elementsFromPoint(e.clientX, e.clientY);
       const contentElement = elements.find((el) => {
         if (!(el instanceof HTMLElement)) return false;
@@ -107,12 +111,12 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
       }) as HTMLElement | undefined;
       if (!contentElement) return;
       e.preventDefault();
-      if (selectedElement) {
-        selectedElement.style.outline = "none";
-      }
+
+      // Create a clone of the element with the style tag since the styles aren't shown in the UI
+      const cleanElement = contentElement.cloneNode(true) as HTMLElement;
+      cleanElement.removeAttribute("style");
+      setSelectedElement(cleanElement);
       contentElement.style.outline = "2px solid rgb(255, 144, 232)";
-      setSelectedElement(contentElement);
-      setIsEditing(true);
     };
 
     document.addEventListener("mousemove", handleMouseMove);
@@ -122,7 +126,7 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("click", handleClick);
     };
-  }, [isEditing, selectedElement]);
+  }, [editState, selectedElement]);
 
   // Add custom selection color styles
   useEffect(() => {
@@ -139,16 +143,20 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
     };
   }, []);
 
-  // Handle keyboard shortcuts
+  // Handle keyboard shortcuts if the input isn't focused
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Only handle window shortcuts when iframe is not focused
+      const iframeInput = iframeRef.current?.contentDocument?.querySelector("input");
+      if (iframeInput === document.activeElement) return;
+
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        setIsEditing(true);
+        setEditState("typing");
       }
       if (e.key === "Escape") {
         e.preventDefault();
-        setIsEditing(false);
+        setEditState("idle");
         // Remove focus from any active element
         if (document.activeElement instanceof HTMLElement) {
           document.activeElement.blur();
@@ -163,55 +171,61 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
   }, []);
 
   // Update handleInputKeyDown
-  const handleInputKeyDown = async (e: KeyboardEvent) => {
-    const input = e.target as HTMLInputElement;
+  const handleInputKeyDown = useCallback(
+    async (e: KeyboardEvent) => {
+      const input = e.target as HTMLInputElement;
 
-    inputValueRef.current = input.value;
+      inputValueRef.current = input.value;
 
-    if (e.key !== "Enter" || !inputValueRef.current) return;
-    e.preventDefault();
-    if (!resultsRef.current) return;
+      if (e.key !== "Enter" || !inputValueRef.current) return;
+      e.preventDefault();
+      if (!resultsRef.current) return;
 
-    try {
-      console.log("Making change:", {
-        text: inputValueRef.current,
-        element: selectedElement
-          ? {
-              html: selectedElement.outerHTML,
-              tagName: selectedElement.tagName,
-              textContent: selectedElement.textContent || "",
-            }
-          : null,
-        fullHtml: resultsRef.current.innerHTML,
-      });
+      try {
+        setIsLoading(true);
+        console.log("Making change:", {
+          text: inputValueRef.current,
+          element: selectedElement
+            ? {
+                html: selectedElement.outerHTML,
+                tagName: selectedElement.tagName,
+                textContent: selectedElement.textContent || "",
+              }
+            : null,
+          fullHtml: resultsRef.current.innerHTML,
+        });
 
-      const updatedHtml = await updateElement(
-        inputValueRef.current,
-        selectedElement
-          ? {
-              html: selectedElement.outerHTML,
-              tagName: selectedElement.tagName,
-              textContent: selectedElement.textContent || "",
-            }
-          : null,
-        resultsRef.current.innerHTML,
-        gumId,
-      );
+        const updatedHtml = await updateElement(
+          inputValueRef.current,
+          selectedElement
+            ? {
+                html: selectedElement.outerHTML,
+                tagName: selectedElement.tagName,
+                textContent: selectedElement.textContent || "",
+              }
+            : null,
+          resultsRef.current.innerHTML,
+          gumId,
+        );
 
-      setCurrentHtml(updatedHtml);
+        setCurrentHtml(updatedHtml);
 
-      setIsEditing(false);
-      input.value = "";
-      inputValueRef.current = "";
-      setSelectedElement(null);
-    } catch (error) {
-      console.error("Failed to update element:", error);
-    }
-  };
+        setEditState("idle");
+        input.value = "";
+        inputValueRef.current = "";
+        setSelectedElement(null);
+      } catch (error) {
+        console.error("Failed to update element:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [inputValueRef, resultsRef, selectedElement, setIsLoading, setEditState, setCurrentHtml, setSelectedElement, gumId],
+  );
 
   // Update iframe useEffect
   useEffect(() => {
-    if (!isEditing || !iframeRef.current) return;
+    if (editState === "idle" || !iframeRef.current) return;
     const iframeDoc = iframeRef.current.contentDocument;
     if (!iframeDoc) return;
     iframeDoc.open();
@@ -248,14 +262,27 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
       inputValueRef.current = (e.target as HTMLInputElement).value;
     };
 
+    // Handle keyboard shortcuts in the iframe
+    const handleIframeKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setEditState("idle");
+        // Remove focus from any active element
+        if (document.activeElement instanceof HTMLElement) {
+          document.activeElement.blur();
+        }
+      }
+      handleInputKeyDown(e);
+    };
+
     input.addEventListener("input", handleInput);
-    input.addEventListener("keydown", handleInputKeyDown);
+    input.addEventListener("keydown", handleIframeKeyDown);
 
     return () => {
       input.removeEventListener("input", handleInput);
-      input.removeEventListener("keydown", handleInputKeyDown);
+      input.removeEventListener("keydown", handleIframeKeyDown);
     };
-  }, [isEditing, selectedElement]);
+  }, [editState, selectedElement, handleInputKeyDown]);
 
   // Add selection change listener
   useEffect(() => {
@@ -266,69 +293,86 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#f4f4f0] dark:bg-black dark:text-white">
-      <div ref={resultsRef} className="relative min-h-screen w-full p-4">
-        <div
-          dangerouslySetInnerHTML={{
-            __html: `
-              <script src="https://cdn.tailwindcss.com"></script>
-              ${currentHtml}
-            `,
-          }}
-        />
-      </div>
-
-      {!isEditing && (
-        <div className="fixed bottom-4 left-1/2 flex -translate-x-1/2 transform items-center gap-1 text-sm text-gray-500">
-          <kbd className="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-800 dark:border-gray-500 dark:bg-gray-600 dark:text-gray-100">
-            ⌘
-          </kbd>
-          <kbd className="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-800 dark:border-gray-500 dark:bg-gray-600 dark:text-gray-100">
-            K
-          </kbd>
-          <span>
-            or <span style={{ backgroundColor: "rgb(255, 144, 232)", color: "black" }}>Highlight</span> or{" "}
-            <span style={{ backgroundColor: "rgb(255, 144, 232)", color: "black" }}>Click</span> to make changes
-          </span>
-        </div>
-      )}
-
-      {isEditing && (
-        <div
-          className="fixed right-0 bottom-0 left-0 border-t border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900"
-          style={{
-            height: "86px",
-            padding: "10px",
-          }}
-        >
-          <iframe
-            ref={iframeRef}
-            className="h-[80px] w-full border-0"
-            style={{
-              height: "40px",
+    <>
+      {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+      <script src="https://cdn.tailwindcss.com"></script>
+      <div className="min-h-screen bg-[#f4f4f0] dark:bg-black dark:text-white">
+        <div ref={resultsRef} className="relative min-h-screen w-full">
+          <div
+            dangerouslySetInnerHTML={{
+              __html: currentHtml,
             }}
           />
-          <div className="absolute top-[50px] flex flex-col items-center">
-            <div className="flex items-center gap-1">
-              {inputValueRef.current ? (
-                <>
-                  <kbd className="bg-muted text-muted-foreground pointer-events-none inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none">
-                    <span className="text-xs">return</span>
-                  </kbd>
-                  <span className="text-sm">to make change</span>
-                </>
-              ) : (
-                <>
-                  <kbd className="bg-muted text-muted-foreground pointer-events-none inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none">
-                    <span className="text-xs">esc</span>
-                  </kbd>
-                  <span className="text-sm">to close</span>
-                </>
-              )}
+        </div>
+
+        {editState === "idle" && (
+          <div className="fixed right-0 bottom-2 left-0 flex">
+            <div className="mx-auto flex transform items-center gap-1 rounded-full bg-white px-4 py-2 text-sm text-gray-500 shadow-lg dark:bg-gray-800">
+              <kbd className="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-800 dark:border-gray-500 dark:bg-gray-600 dark:text-gray-100">
+                ⌘
+              </kbd>
+              <kbd className="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-800 dark:border-gray-500 dark:bg-gray-600 dark:text-gray-100">
+                K
+              </kbd>
+              <span>
+                or <span style={{ backgroundColor: "rgb(255, 144, 232)", color: "black" }}>Highlight</span> or{" "}
+                <span className="text-black dark:text-white">Click</span> to make changes
+              </span>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+
+        {editState === "typing" && (
+          <div
+            className="fixed right-0 bottom-0 left-0 border-t border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900"
+            style={{
+              height: "86px",
+              padding: "10px",
+            }}
+          >
+            <iframe
+              ref={iframeRef}
+              className="h-[80px] w-full border-0"
+              style={{
+                height: "40px",
+              }}
+            />
+            <div className="absolute top-[50px] flex flex-col items-center">
+              <div className="flex items-center gap-1">
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="relative h-5 w-5">
+                      <Image
+                        src="/icon.png"
+                        alt="Loading..."
+                        width={20}
+                        height={20}
+                        className="h-full w-full animate-spin"
+                        style={{ animationDuration: "1s" }}
+                      />
+                    </div>
+                    <span className="text-sm">Making changes...</span>
+                  </div>
+                ) : inputValueRef.current ? (
+                  <>
+                    <kbd className="bg-muted text-muted-foreground pointer-events-none inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none">
+                      <span className="text-xs">return</span>
+                    </kbd>
+                    <span className="text-sm">to make change</span>
+                  </>
+                ) : (
+                  <>
+                    <kbd className="bg-muted text-muted-foreground pointer-events-none inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none">
+                      <span className="text-xs">esc</span>
+                    </kbd>
+                    <span className="text-sm">to close</span>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 }

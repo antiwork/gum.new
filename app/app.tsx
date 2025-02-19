@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { useEffect, useState, useRef } from "react";
-import { redirect } from "next/navigation";
 import { Loader } from "@/components/ui/loader";
 import Logo from "./components/Logo";
 import { signIn } from "next-auth/react";
@@ -64,7 +63,6 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
   const [newProductDetails, setNewProductDetails] = useState("");
   const defaultText = "a landing page";
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  console.log(products);
 
   useEffect(() => {
     let index = 0;
@@ -90,15 +88,20 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const form = e.target as HTMLFormElement;
-    const formData = new FormData(form);
 
     const messages = [
       {
+<<<<<<< HEAD
         content: `Make ${formData.get("about")}`,
         productInfo: isNewProduct
           ? { type: "new", details: newProductDetails }
           : { type: "existing", id: formData.get("product") },
+=======
+        content: `Make ${about}`,
+        productInfo: JSON.stringify(
+          isNewProduct ? newProductDetails : (products?.find((p) => p.id === selectedProduct) ?? ""),
+        ),
+>>>>>>> c08307c83eb054f5c6fd851660f4057457c48160
       },
     ];
 
@@ -118,7 +121,7 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
       const { id } = await response.json();
       setStatus("finished");
       setTimeout(() => {
-        redirect(`/gum/${id}`);
+        window.location.href = `/gum/${id}`;
       }, 1000);
     } catch (error) {
       console.error("Error generating content:", error);
@@ -134,7 +137,7 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
       {status !== "initial" ? <Loader isDoneLoading={status === "finished"} /> : null}
       <form
         onSubmit={handleSubmit}
-        className="font-['Helvetica Neue',Helvetica,Arial,sans-serif] absolute top-1/2 left-1/2 z-10 w-full max-w-[61%] -translate-x-1/2 -translate-y-1/2 px-8 text-6xl leading-2 font-bold text-black sm:w-[calc(100%-4rem)] dark:text-white"
+        className="font-['Helvetica Neue',Helvetica,Arial,sans-serif] absolute top-1/2 left-1/2 z-10 w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 px-4 text-3xl leading-2 font-bold text-black sm:w-[calc(100%-4rem)] sm:text-4xl md:max-w-[61%] md:text-5xl lg:text-6xl dark:text-white"
         style={{ lineHeight: "150%" }}
       >
         I want to make
@@ -142,7 +145,7 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
           ref={inputRef}
           name="about"
           placeholder="..."
-          className="mt-2 block w-full resize-none rounded-[20px] border-4 border-black px-6 py-6 text-6xl dark:border-white dark:text-black"
+          className="mt-2 block w-full resize-none rounded-[20px] border-4 border-black px-4 py-4 text-3xl sm:px-6 sm:py-6 sm:text-4xl md:text-5xl lg:text-6xl dark:border-white dark:text-black"
           value={about}
           style={{
             backgroundColor: "rgba(255, 144, 232)",
@@ -168,7 +171,11 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
                         setSelectedProduct(e.target.value);
                       }
                     }}
+<<<<<<< HEAD
                     className="mt-4 block w-full appearance-none rounded-[20px] border-4 border-black px-6 py-6 text-6xl dark:border-white dark:text-black"
+=======
+                    className="mt-4 block w-full appearance-none rounded-[20px] border-4 border-black px-4 py-4 text-3xl sm:px-6 sm:py-6 sm:text-4xl md:text-5xl lg:text-6xl dark:border-white dark:text-black"
+>>>>>>> c08307c83eb054f5c6fd851660f4057457c48160
                     style={{
                       backgroundColor: "rgba(255, 201, 0)",
                     }}
@@ -206,8 +213,8 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
         <Button
           type="submit"
           variant="outline"
-          className="mt-8 w-full cursor-pointer rounded-full border-4 border-black bg-black p-8 text-5xl font-bold text-white transition-colors hover:bg-white hover:text-black dark:border-white dark:bg-black dark:text-white dark:hover:bg-white dark:hover:text-black"
-          disabled={status === "generating"}
+          className="mt-8 w-full cursor-pointer rounded-full border-4 border-black bg-black p-4 text-2xl font-bold text-white transition-colors hover:bg-white hover:text-black sm:p-6 sm:text-3xl md:p-8 md:text-4xl lg:text-5xl dark:border-white dark:bg-black dark:text-white dark:hover:bg-white dark:hover:text-black"
+          disabled={status !== "initial"}
         >
           {status === "generating" ? "Creating..." : "Create"}
         </Button>
@@ -223,7 +230,7 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
           <div className="absolute inset-0 bg-[rgba(255,144,232,0.8)] backdrop-blur-sm" />
           <Button
             onClick={() => signIn("gumroad")}
-            className="relative z-10 cursor-pointer rounded-full border-4 border-black bg-white p-8 text-5xl font-bold text-black transition-colors hover:bg-black hover:text-white dark:border-white"
+            className="relative z-10 cursor-pointer rounded-full border-4 border-black bg-white p-4 text-2xl font-bold text-black transition-colors hover:bg-black hover:text-white sm:p-6 sm:text-3xl md:p-8 md:text-4xl lg:text-5xl dark:border-white"
           >
             Login with Gumroad
           </Button>

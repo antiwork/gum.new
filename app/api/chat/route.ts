@@ -7,7 +7,7 @@ import { generateLandingPagePrompt } from "@/lib/prompts";
 import { auth } from "@/auth";
 import { sanitizeHtml } from "@/lib/sanitize";
 
-export const maxDuration = 30;
+export const maxDuration = 100;
 const DEBUG_MODE = false;
 
 export async function POST(req: Request) {
@@ -18,8 +18,11 @@ export async function POST(req: Request) {
   }
 
   const { messages } = await req.json();
-  const lastMessage = messages[messages.length - 1].content;
-  const prompt = generateLandingPagePrompt(lastMessage);
+  const lastMessage = messages[messages.length - 1];
+  const purpose = lastMessage.content;
+  const productInfo = lastMessage.productInfo;
+  const prompt = generateLandingPagePrompt(purpose, productInfo);
+  console.log(prompt);
 
   if (DEBUG_MODE) {
     await new Promise((resolve) => setTimeout(resolve, 1250));
