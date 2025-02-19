@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import Image from "next/image";
 
 async function updateElement(
   text: string,
@@ -170,54 +171,57 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
   }, []);
 
   // Update handleInputKeyDown
-  const handleInputKeyDown = async (e: KeyboardEvent) => {
-    const input = e.target as HTMLInputElement;
+  const handleInputKeyDown = useCallback(
+    async (e: KeyboardEvent) => {
+      const input = e.target as HTMLInputElement;
 
-    inputValueRef.current = input.value;
+      inputValueRef.current = input.value;
 
-    if (e.key !== "Enter" || !inputValueRef.current) return;
-    e.preventDefault();
-    if (!resultsRef.current) return;
+      if (e.key !== "Enter" || !inputValueRef.current) return;
+      e.preventDefault();
+      if (!resultsRef.current) return;
 
-    try {
-      setIsLoading(true);
-      console.log("Making change:", {
-        text: inputValueRef.current,
-        element: selectedElement
-          ? {
-              html: selectedElement.outerHTML,
-              tagName: selectedElement.tagName,
-              textContent: selectedElement.textContent || "",
-            }
-          : null,
-        fullHtml: resultsRef.current.innerHTML,
-      });
+      try {
+        setIsLoading(true);
+        console.log("Making change:", {
+          text: inputValueRef.current,
+          element: selectedElement
+            ? {
+                html: selectedElement.outerHTML,
+                tagName: selectedElement.tagName,
+                textContent: selectedElement.textContent || "",
+              }
+            : null,
+          fullHtml: resultsRef.current.innerHTML,
+        });
 
-      const updatedHtml = await updateElement(
-        inputValueRef.current,
-        selectedElement
-          ? {
-              html: selectedElement.outerHTML,
-              tagName: selectedElement.tagName,
-              textContent: selectedElement.textContent || "",
-            }
-          : null,
-        resultsRef.current.innerHTML,
-        gumId,
-      );
+        const updatedHtml = await updateElement(
+          inputValueRef.current,
+          selectedElement
+            ? {
+                html: selectedElement.outerHTML,
+                tagName: selectedElement.tagName,
+                textContent: selectedElement.textContent || "",
+              }
+            : null,
+          resultsRef.current.innerHTML,
+          gumId,
+        );
 
-      setCurrentHtml(updatedHtml);
+        setCurrentHtml(updatedHtml);
 
-      setEditState("idle");
-      input.value = "";
-      inputValueRef.current = "";
-      setSelectedElement(null);
-    } catch (error) {
-      console.error("Failed to update element:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+        setEditState("idle");
+        input.value = "";
+        inputValueRef.current = "";
+        setSelectedElement(null);
+      } catch (error) {
+        console.error("Failed to update element:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [inputValueRef, resultsRef, selectedElement, setIsLoading, setEditState, setCurrentHtml, setSelectedElement, gumId],
+  );
 
   // Update iframe useEffect
   useEffect(() => {
@@ -278,7 +282,7 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
       input.removeEventListener("input", handleInput);
       input.removeEventListener("keydown", handleIframeKeyDown);
     };
-  }, [editState, selectedElement]);
+  }, [editState, selectedElement, handleInputKeyDown]);
 
   // Add selection change listener
   useEffect(() => {
@@ -293,7 +297,7 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
       {/* eslint-disable-next-line @next/next/no-sync-scripts */}
       <script src="https://cdn.tailwindcss.com"></script>
       <div className="min-h-screen bg-[#f4f4f0] dark:bg-black dark:text-white">
-        <div ref={resultsRef} className="relative min-h-screen w-full p-4">
+        <div ref={resultsRef} className="relative min-h-screen w-full">
           <div
             dangerouslySetInnerHTML={{
               __html: currentHtml,
@@ -302,17 +306,19 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
         </div>
 
         {editState === "idle" && (
-          <div className="fixed bottom-4 left-1/2 flex -translate-x-1/2 transform items-center gap-1 text-sm text-gray-500">
-            <kbd className="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-800 dark:border-gray-500 dark:bg-gray-600 dark:text-gray-100">
-              ⌘
-            </kbd>
-            <kbd className="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-800 dark:border-gray-500 dark:bg-gray-600 dark:text-gray-100">
-              K
-            </kbd>
-            <span>
-              or <span style={{ backgroundColor: "rgb(255, 144, 232)", color: "black" }}>Highlight</span> or{" "}
-              <span style={{ backgroundColor: "rgb(255, 144, 232)", color: "black" }}>Click</span> to make changes
-            </span>
+          <div className="fixed right-0 bottom-2 left-0 flex">
+            <div className="mx-auto flex transform items-center gap-1 rounded-full bg-white px-4 py-2 text-sm text-gray-500 shadow-lg dark:bg-gray-800">
+              <kbd className="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-800 dark:border-gray-500 dark:bg-gray-600 dark:text-gray-100">
+                ⌘
+              </kbd>
+              <kbd className="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-800 dark:border-gray-500 dark:bg-gray-600 dark:text-gray-100">
+                K
+              </kbd>
+              <span>
+                or <span style={{ backgroundColor: "rgb(255, 144, 232)", color: "black" }}>Highlight</span> or{" "}
+                <span className="text-black dark:text-white">Click</span> to make changes
+              </span>
+            </div>
           </div>
         )}
 
@@ -336,9 +342,11 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
                 {isLoading ? (
                   <div className="flex items-center gap-2">
                     <div className="relative h-5 w-5">
-                      <img
+                      <Image
                         src="/icon.png"
                         alt="Loading..."
+                        width={20}
+                        height={20}
                         className="h-full w-full animate-spin"
                         style={{ animationDuration: "1s" }}
                       />
