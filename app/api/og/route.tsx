@@ -3,8 +3,6 @@ import { join } from "path";
 import { readFileSync } from "fs";
 
 export async function GET() {
-  const imageData = readFileSync(join(process.cwd(), "public", "logo.png"));
-
   return new ImageResponse(
     (
       <h1 tw="z-11 flex items-center font-bold">
