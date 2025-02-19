@@ -130,7 +130,7 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
       {status !== "initial" ? <Loader isDoneLoading={status === "finished"} /> : null}
       <form
         onSubmit={handleSubmit}
-        className="font-['Helvetica Neue',Helvetica,Arial,sans-serif] absolute top-1/2 left-1/2 z-10 w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 px-4 text-3xl leading-2 font-bold text-black sm:w-[calc(100%-4rem)] sm:text-4xl md:max-w-[61%] md:text-5xl lg:text-6xl dark:text-white"
+        className="font-['Helvetica Neue',Helvetica,Arial,sans-serif] absolute top-1/2 left-1/2 z-10 w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 px-4 text-3xl leading-2 font-bold text-black sm:w-[calc(100%-4rem)] sm:text-4xl md:max-w-[61%] md:text-5xl lg:text-6xl dark:text-white italic"
         style={{ lineHeight: "150%" }}
       >
         I want to make
@@ -150,7 +150,7 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
         />
         {products && products.length > 0 && (
           <>
-            <div className="mt-8 text-6xl">to sell</div>
+            <div className="mt-8 text-6xl italic">to sell</div>
             <div className="relative">
               {!isNewProduct ? (
                 <>
