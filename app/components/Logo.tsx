@@ -44,7 +44,7 @@ export default function Logo({
       </svg>
       <span
         style={{
-          marginLeft: `${0.5 * sizeMultiplier}rem`,
+          marginLeft: `${8 * sizeMultiplier}px`,
           borderRadius: "9999px",
           border: `${1 * sizeMultiplier}px solid`,
           paddingLeft: `${8 * sizeMultiplier}px`,
