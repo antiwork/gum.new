@@ -174,7 +174,6 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
                         {product.name}
                       </option>
                     ))}
-                    <option value="new">A totally new product</option>
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-8">
                     <svg className="h-12 w-12 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
