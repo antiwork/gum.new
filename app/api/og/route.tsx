@@ -12,6 +12,7 @@ export async function GET() {
           alignItems: "center",
           justifyContent: "center",
           padding: 20,
+          backgroundColor: "#f4f4f0",
         }}
       >
         <Logo useTailwind={false} sizeMultiplier={3} />
