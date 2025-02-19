@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, RefObject } from "react";
 import Image from "next/image";
 
 async function updateElement(
@@ -48,10 +48,9 @@ async function updateElement(
 }
 
 export default function Editor({ initialHtml, gumId }: { initialHtml: string; gumId: string }) {
-  // const [isEditing, setIsEditing] = useState(false);
   const [selectedElement, setSelectedElement] = useState<HTMLElement | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [editState, setEditState] = useState<"idle" | "loading" | "typing">("idle");
+  const [editState, setEditState] = useState<"idle" | "typing">("idle");
   const inputValueRef = useRef("");
 
   const resultsRef = useRef<HTMLDivElement>(null);
@@ -150,7 +149,7 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
       const iframeInput = iframeRef.current?.contentDocument?.querySelector("input");
       if (iframeInput === document.activeElement) return;
 
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+      if (e.key === "/") {
         e.preventDefault();
         setEditState("typing");
       }
@@ -177,7 +176,21 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
 
       inputValueRef.current = input.value;
 
-      if (e.key !== "Enter" || !inputValueRef.current) return;
+      if (!inputValueRef.current) return;
+
+      if (e.key === "Escape") {
+        setEditState("idle");
+        if (document.activeElement instanceof HTMLElement) {
+          document.activeElement.blur();
+        }
+        return;
+      }
+
+      if (e.key !== "Enter") {
+        setEditState("typing");
+        return;
+      }
+
       e.preventDefault();
       if (!resultsRef.current) return;
 
@@ -234,10 +247,15 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
       <html>
         <head>
           <style>
-            body { margin: 0; }
+            body { 
+              margin: 0;
+              display: flex;
+              justify-content: center;
+              height: 100%;
+            }
             input {
               width: 100%;
-              height: 100%;
+              height: 24px;
               font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
               font-size: inherit;
               padding: 8px;
@@ -247,7 +265,7 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
           </style>
         </head>
         <body>
-          <input type="text" placeholder="Type changes..." />
+          <input type="text" />
         </body>
       </html>
     `);
@@ -304,8 +322,11 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
             }}
           />
         </div>
+        <div className="fixed bottom-0 left-0 flex w-full pb-4">
+          <CommandBar iFrameRef={iframeRef} editState={editState} isLoading={isLoading} />
+        </div>
 
-        {editState === "idle" && (
+        {/* {editState === "idle" && (
           <div className="fixed right-0 bottom-2 left-0 flex">
             <div className="mx-auto flex transform items-center gap-1 rounded-full bg-white px-4 py-2 text-sm text-gray-500 shadow-lg dark:bg-gray-800">
               <kbd className="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-800 dark:border-gray-500 dark:bg-gray-600 dark:text-gray-100">
@@ -371,8 +392,63 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
               </div>
             </div>
           </div>
-        )}
+        )} */}
       </div>
     </>
+  );
+}
+
+function CommandBar({
+  iFrameRef,
+  editState,
+  isLoading,
+}: {
+  iFrameRef: RefObject<HTMLIFrameElement | null>;
+  editState: "idle" | "typing";
+  isLoading: boolean;
+}) {
+  return (
+    <div className="mx-auto flex w-1/2 min-w-md transform items-center justify-center gap-1 rounded-full bg-white px-6 py-2 text-sm text-gray-500 shadow-lg dark:bg-gray-800">
+      <kbd className="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-800 dark:border-gray-500 dark:bg-gray-600 dark:text-gray-100">
+        /
+      </kbd>
+      <div className="relative flex flex-1 items-center justify-center">
+        {editState === "typing" ? (
+          <iframe
+            ref={iFrameRef}
+            style={{
+              height: "40px",
+              width: "100%",
+            }}
+          />
+        ) : (
+          <div className="h-[40px]" />
+        )}
+        <div
+          className={`absolute bottom-1.5 left-[6px] h-0.5 w-[calc(100%-12px)] ${editState === "typing" ? "bg-blue-500" : "bg-gray-500"}`}
+        ></div>
+      </div>
+      {isLoading ? (
+        <div className="relative h-5 w-5">
+          <Image
+            src="/icon.png"
+            alt="Loading..."
+            width={20}
+            height={20}
+            className="h-full w-full animate-spin"
+            style={{ animationDuration: "1s" }}
+          />
+        </div>
+      ) : editState === "idle" ? (
+        <span className="flex items-center gap-1">
+          or <span style={{ backgroundColor: "rgb(255, 144, 232)", color: "black" }}>Highlight</span> or{" "}
+          <span className="text-black dark:text-white">Click</span>
+        </span>
+      ) : editState === "typing" ? (
+        <kbd className="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-800 dark:border-gray-500 dark:bg-gray-600 dark:text-gray-100">
+          ↵
+        </kbd>
+      ) : null}
+    </div>
   );
 }
