@@ -316,7 +316,7 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
               </kbd>
               <span>
                 or <span style={{ backgroundColor: "rgb(255, 144, 232)", color: "black" }}>Highlight</span> or{" "}
-                <span style={{ color: "black" }}>Click</span> to make changes
+                <span className="text-black dark:text-white">Click</span> to make changes
               </span>
             </div>
           </div>
