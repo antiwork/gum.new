@@ -26,14 +26,7 @@ export const metadata: Metadata = {
     siteName: "gum.new",
     locale: "en_US",
     type: "website",
-    images: [
-      {
-        url: "/api/og",
-        width: 1200,
-        height: 630,
-        alt: "gum.new",
-      },
-    ],
+    images: ["/api/og"],
   },
   twitter: {
     card: "summary_large_image",
