@@ -91,6 +91,9 @@ export const gums = pgTable("gums", {
   userId: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
+  coverUrl: text("cover_url"),
+  description: text("description"),
+  productId: text("product_id"),
   createdAt: timestamp("created_at", { precision: 3, mode: "date" }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { precision: 3, mode: "date" })
     .defaultNow()
