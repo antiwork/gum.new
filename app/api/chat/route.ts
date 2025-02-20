@@ -12,7 +12,6 @@ export const maxDuration = 100;
 const DEBUG_MODE = false;
 
 function htmlToPlainText(html: string): string {
-  // Remove all HTML tags and decode HTML entities
   return sanitizeHtmlLib(html, {
     allowedTags: [], // Allow no tags
     allowedAttributes: {}, // Allow no attributes
