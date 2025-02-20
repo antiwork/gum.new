@@ -253,31 +253,44 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
               justify-content: center;
               height: 100%;
             }
-            input {
+            textarea {
               width: 100%;
-              height: 24px;
+              min-height: 24px;
               font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
               font-size: inherit;
               padding: 8px;
               border: none;
               outline: none;
+              resize: none;
+              overflow: hidden;
+              white-space: pre-wrap;
+              word-wrap: break-word;
             }
           </style>
         </head>
         <body>
-          <input type="text" />
+          <textarea rows="1"></textarea>
         </body>
       </html>
     `);
     iframeDoc.close();
 
-    const input = iframeDoc.querySelector("input");
-    if (!input) return;
-    input.focus();
+    const textarea = iframeDoc.querySelector("textarea");
+    if (!textarea) return;
+    textarea.focus();
 
-    // Add input event listener to track value changes
+    // Auto-resize function
+    const autoResize = () => {
+      textarea.style.height = "24px";
+      const heightNeeded = textarea.scrollHeight;
+      textarea.style.height = `${heightNeeded}px`;
+      iframeRef.current!.style.height = `${heightNeeded}px`;
+    };
+
+    // Add input event listener to track value changes and resize
     const handleInput = (e: Event) => {
-      inputValueRef.current = (e.target as HTMLInputElement).value;
+      inputValueRef.current = (e.target as HTMLTextAreaElement).value;
+      autoResize();
     };
 
     // Handle keyboard shortcuts in the iframe
@@ -293,12 +306,12 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
       handleInputKeyDown(e);
     };
 
-    input.addEventListener("input", handleInput);
-    input.addEventListener("keydown", handleIframeKeyDown);
+    textarea.addEventListener("input", handleInput);
+    textarea.addEventListener("keydown", handleIframeKeyDown);
 
     return () => {
-      input.removeEventListener("input", handleInput);
-      input.removeEventListener("keydown", handleIframeKeyDown);
+      textarea.removeEventListener("input", handleInput);
+      textarea.removeEventListener("keydown", handleIframeKeyDown);
     };
   }, [editState, selectedElement, handleInputKeyDown]);
 
@@ -325,74 +338,6 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
         <div className="fixed bottom-0 left-0 flex w-full pb-4">
           <CommandBar iFrameRef={iframeRef} editState={editState} isLoading={isLoading} />
         </div>
-
-        {/* {editState === "idle" && (
-          <div className="fixed right-0 bottom-2 left-0 flex">
-            <div className="mx-auto flex transform items-center gap-1 rounded-full bg-white px-4 py-2 text-sm text-gray-500 shadow-lg dark:bg-gray-800">
-              <kbd className="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-800 dark:border-gray-500 dark:bg-gray-600 dark:text-gray-100">
-                ⌘
-              </kbd>
-              <kbd className="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-800 dark:border-gray-500 dark:bg-gray-600 dark:text-gray-100">
-                K
-              </kbd>
-              <span>
-                or <span style={{ backgroundColor: "rgb(255, 144, 232)", color: "black" }}>Highlight</span> or{" "}
-                <span className="text-black dark:text-white">Click</span> to make changes
-              </span>
-            </div>
-          </div>
-        )}
-
-        {editState === "typing" && (
-          <div
-            className="fixed right-0 bottom-0 left-0 border-t border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900"
-            style={{
-              height: "86px",
-              padding: "10px",
-            }}
-          >
-            <iframe
-              ref={iframeRef}
-              className="h-[80px] w-full border-0"
-              style={{
-                height: "40px",
-              }}
-            />
-            <div className="absolute top-[50px] flex flex-col items-center">
-              <div className="flex items-center gap-1">
-                {isLoading ? (
-                  <div className="flex items-center gap-2">
-                    <div className="relative h-5 w-5">
-                      <Image
-                        src="/icon.png"
-                        alt="Loading..."
-                        width={20}
-                        height={20}
-                        className="h-full w-full animate-spin"
-                        style={{ animationDuration: "1s" }}
-                      />
-                    </div>
-                    <span className="text-sm">Making changes...</span>
-                  </div>
-                ) : inputValueRef.current ? (
-                  <>
-                    <kbd className="bg-muted text-muted-foreground pointer-events-none inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none">
-                      <span className="text-xs">return</span>
-                    </kbd>
-                    <span className="text-sm">to make change</span>
-                  </>
-                ) : (
-                  <>
-                    <kbd className="bg-muted text-muted-foreground pointer-events-none inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none">
-                      <span className="text-xs">esc</span>
-                    </kbd>
-                    <span className="text-sm">to close</span>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        )} */}
       </div>
     </>
   );
@@ -409,9 +354,7 @@ function CommandBar({
 }) {
   return (
     <div className="mx-auto flex w-1/2 min-w-md transform items-center justify-center gap-1 rounded-full bg-white px-6 py-2 text-sm text-gray-500 shadow-lg dark:bg-gray-800">
-      <kbd className="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-800 dark:border-gray-500 dark:bg-gray-600 dark:text-gray-100">
-        /
-      </kbd>
+      <Kbd symbol="/" />
       <div className="relative flex flex-1 items-center justify-center">
         {editState === "typing" ? (
           <iframe
@@ -445,10 +388,16 @@ function CommandBar({
           <span className="text-black dark:text-white">Click</span>
         </span>
       ) : editState === "typing" ? (
-        <kbd className="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-800 dark:border-gray-500 dark:bg-gray-600 dark:text-gray-100">
-          ↵
-        </kbd>
+        <Kbd symbol="↵" />
       ) : null}
     </div>
+  );
+}
+
+function Kbd({ symbol }: { symbol: string }) {
+  return (
+    <kbd className="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-800 dark:border-gray-500 dark:bg-gray-600 dark:text-gray-100">
+      {symbol}
+    </kbd>
   );
 }
