@@ -7,6 +7,9 @@ export type Version = typeof schema.versions.$inferSelect;
 export interface CreateGumInput {
   userId: string;
   title: string;
+  description?: string;
+  coverUrl?: string;
+  productId?: string;
   version: {
     html: string;
     prompt: string;
@@ -24,6 +27,9 @@ export async function createGum(input: CreateGumInput): Promise<CreateGumOutput>
     .values({
       userId: input.userId,
       title: input.title,
+      description: input.description,
+      coverUrl: input.coverUrl,
+      productId: input.productId,
     })
     .returning();
 
