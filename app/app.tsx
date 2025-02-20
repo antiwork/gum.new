@@ -125,7 +125,7 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
   const loggedInContent = (
     <div className="flex min-h-screen items-center justify-center bg-[#f4f4f0] dark:bg-black dark:text-white">
       <div className="absolute top-4 left-4">
-        <Logo />
+        <Logo useTailwind={false} />
       </div>
       {status !== "initial" ? <Loader isDoneLoading={status === "finished"} /> : null}
       <form
