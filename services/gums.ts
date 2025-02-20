@@ -22,6 +22,7 @@ export interface CreateGumOutput {
 }
 
 export async function createGum(input: CreateGumInput): Promise<CreateGumOutput> {
+  console.log(input);
   const [gum] = await db
     .insert(schema.gums)
     .values({
@@ -32,6 +33,8 @@ export async function createGum(input: CreateGumInput): Promise<CreateGumOutput>
       productId: input.productId,
     })
     .returning();
+
+  console.log(gum);
 
   if (!gum) {
     throw new Error("Failed to create gum");

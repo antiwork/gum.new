@@ -39,7 +39,7 @@ export async function POST(req: Request) {
       userId,
       title: productData.name,
       description: htmlToPlainText(productData.description),
-      coverUrl: productData.preview_url ?? "",
+      coverUrl: productData.preview_url,
       productId: productData.id,
       version: {
         html: "<div class='bg-red-200 p-10 font-bold text-2xl'>Testing landing page</div>",
@@ -62,7 +62,6 @@ export async function POST(req: Request) {
 
   let landingPage = "";
   for await (const partialObject of partialObjectStream) {
-    console.log(partialObject);
     if (partialObject.landingPage) {
       landingPage = partialObject.landingPage;
     }
@@ -75,6 +74,8 @@ export async function POST(req: Request) {
     userId,
     title: productData.name,
     description: htmlToPlainText(productData.description),
+    coverUrl: productData.preview_url,
+    productId: productData.id,
     version: {
       html: sanitizedHtml,
       prompt,
