@@ -56,7 +56,6 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
   const resultsRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  // Add state to track the current HTML
   const [currentHtml, setCurrentHtml] = useState(initialHtml);
 
   const handleSelection = () => {
@@ -156,6 +155,7 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
       if (e.key === "Escape") {
         e.preventDefault();
         setEditState("idle");
+        setSelectedElement(null);
         // Remove focus from any active element
         if (document.activeElement instanceof HTMLElement) {
           document.activeElement.blur();
@@ -169,7 +169,6 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
     };
   }, []);
 
-  // Update handleInputKeyDown
   const handleInputKeyDown = useCallback(
     async (e: KeyboardEvent) => {
       const input = e.target as HTMLInputElement;
@@ -222,7 +221,6 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
         );
 
         setCurrentHtml(updatedHtml);
-
         setEditState("idle");
         input.value = "";
         inputValueRef.current = "";
@@ -279,7 +277,6 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
     if (!textarea) return;
     textarea.focus();
 
-    // Auto-resize function
     const autoResize = () => {
       textarea.style.height = "24px";
       const heightNeeded = textarea.scrollHeight;
@@ -293,7 +290,6 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
       autoResize();
     };
 
-    // Handle keyboard shortcuts in the iframe
     const handleIframeKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         e.preventDefault();
@@ -308,7 +304,6 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
 
     textarea.addEventListener("input", handleInput);
     textarea.addEventListener("keydown", handleIframeKeyDown);
-
     return () => {
       textarea.removeEventListener("input", handleInput);
       textarea.removeEventListener("keydown", handleIframeKeyDown);
