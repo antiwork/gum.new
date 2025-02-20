@@ -1,12 +1,27 @@
-/// <reference types="react" />
-
 "use client";
 
-import { getGumCreationStats } from "@/lib/dashboard";
+import { useEffect } from "react";
+import { useState } from "react";
+import { getGumCreationStats } from "./actions";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
-export default async function DashboardPage() {
-  const stats = await getGumCreationStats();
+export default function DashboardPage() {
+  const [stats, setStats] = useState<Array<{ date: string; gums: number; users: number }>>([]);
+
+  // Add function to calculate rounded max value
+  const calculateYAxisMax = (data: Array<{ gums: number; users: number }>, key: "gums" | "users") => {
+    const max = Math.max(...data.map((item) => item[key]));
+    const roundedMax = Math.ceil(max / 10) * 10; // Round up to nearest 10
+    return roundedMax;
+  };
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      const data = await getGumCreationStats();
+      setStats(data);
+    };
+    fetchStats();
+  }, []);
 
   return (
     <div className="container mx-auto p-8">
@@ -21,7 +36,7 @@ export default async function DashboardPage() {
               <BarChart data={stats}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" stroke="#000" fontSize={12} tickLine={false} />
-                <YAxis stroke="#000" fontSize={12} tickLine={false} />
+                <YAxis stroke="#000" fontSize={12} tickLine={false} domain={[0, calculateYAxisMax(stats, "gums")]} />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: "#fff",
@@ -45,7 +60,7 @@ export default async function DashboardPage() {
               <BarChart data={stats}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" stroke="#000" fontSize={12} tickLine={false} />
-                <YAxis stroke="#000" fontSize={12} tickLine={false} />
+                <YAxis stroke="#000" fontSize={12} tickLine={false} domain={[0, calculateYAxisMax(stats, "users")]} />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: "#fff",
