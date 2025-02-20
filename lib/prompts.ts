@@ -41,7 +41,6 @@ export function generateLandingPagePrompt(purpose: string, productContext?: stri
 
     Example 1:
     <div class="min-h-screen bg-black text-white">
-      <!-- Hero Section -->
       <main class="max-w-7xl mx-auto px-6 py-12">
         <div class="grid lg:grid-cols-2 gap-12 items-center">
           <div class="space-y-8">
@@ -73,7 +72,6 @@ export function generateLandingPagePrompt(purpose: string, productContext?: stri
           </div>
         </div>
 
-        <!-- What You'll Learn Section -->
         <section class="py-24 space-y-12">
           <h2 class="text-3xl font-bold text-center">What You'll Learn</h2>
 
@@ -104,7 +102,6 @@ export function generateLandingPagePrompt(purpose: string, productContext?: stri
           </div>
         </section>
 
-        <!-- Author Section -->
         <section class="py-12">
           <div class="flex flex-col md:flex-row gap-12 items-center max-w-3xl mx-auto">
             <div class="w-48 h-48 rounded-full overflow-hidden border-4 border-indigo-500 flex-shrink-0">
@@ -138,7 +135,6 @@ export function generateLandingPagePrompt(purpose: string, productContext?: stri
           </div>
         </section>
 
-        <!-- Pricing Section -->
         <section class="py-24">
           <h2 class="text-3xl font-bold text-center mb-12">Choose Your Package</h2>
 
@@ -162,7 +158,6 @@ export function generateLandingPagePrompt(purpose: string, productContext?: stri
           </div>
         </section>
 
-        <!-- Money Back Guarantee -->
         <section class="text-center py-12 border-t border-gray-800">
           <h2 class="text-2xl font-bold mb-4">100% Money-Back Guarantee</h2>
           <p class="text-gray-400 max-w-2xl mx-auto">
@@ -222,113 +217,220 @@ export function generateLandingPagePrompt(purpose: string, productContext?: stri
     </main>
 
     Example 3:
-        <div className="min-h-screen bg-gray-50 text-gray-900">
-      <header className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-black text-center">DesignFlow Pro</h1>
+    <div class="min-h-screen bg-gray-50 text-gray-900">
+      <header class="container mx-auto px-4 py-8">
+        <h1 class="text-4xl font-black text-center">DesignFlow Pro</h1>
       </header>
 
-      <main className="container mx-auto px-4 max-w-4xl">
-        {/* Hero Section */}
-        <section className="text-center pt-10 pb-20">
-          <h2 className="text-6xl font-extrabold mb-6 leading-tight">Elevate Your Design Workflow</h2>
-          <p className="text-2xl text-gray-700 mb-10 max-w-3xl mx-auto leading-relaxed">
+      <main class="container mx-auto px-4 max-w-4xl">
+        <section class="text-center pt-10 pb-20">
+          <h2 class="text-6xl font-extrabold mb-6 leading-tight">Elevate Your Design Workflow</h2>
+          <p class="text-2xl text-gray-700 mb-10 max-w-3xl mx-auto leading-relaxed">
             DesignFlow Pro is the ultimate tool for designers who want to streamline their process, boost productivity,
             and create stunning designs faster than ever before.
           </p>
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-6 rounded-md text-xl font-bold shadow-lg hover:shadow-xl transition-all duration-300">
+          <button class="bg-blue-600 hover:bg-blue-700 text-white px-10 py-6 rounded-md text-xl font-bold shadow-lg hover:shadow-xl transition-all duration-300">
             Transform Your Design Process
           </button>
         </section>
 
-        {/* Product Showcase */}
-        <section className="mb-20">
-          <div className="relative w-full h-[600px] rounded-xl overflow-hidden shadow-2xl">
-            <Image
+        <section class="mb-20">
+          <div class="relative w-full h-[600px] rounded-xl overflow-hidden shadow-2xl">
+            <img
               src="/placeholder.svg"
               alt="DesignFlow Pro Interface"
-              layout="fill"
-              objectFit="cover"
-              className="rounded-xl"
+              class="rounded-xl object-cover w-full h-full"
             />
           </div>
         </section>
 
-        {/* Key Benefits */}
-        <section className="py-20">
-          <h3 className="text-4xl font-bold mb-12 text-center">Why Designers Love DesignFlow Pro</h3>
-          <div className="space-y-12">
-            {[
-              {
-                title: "Intuitive Interface",
-                description:
-                  "Our clean, minimalist interface is designed by designers, for designers. Every tool is exactly where you expect it to be, allowing you to focus on what matters most - your creativity.",
-              },
-              {
-                title: "Smart Automation",
-                description:
-                  "Say goodbye to repetitive tasks. DesignFlow Pro's AI-powered automation handles the mundane, freeing you to tackle the creative challenges that truly require your expertise.",
-              },
-              {
-                title: "Seamless Collaboration",
-                description:
-                  "Share your work, gather feedback, and collaborate in real-time. Our robust sharing features ensure that you're always on the same page with your team and clients.",
-              },
-            ].map((benefit, index) => (
-              <div key={index} className="space-y-2">
-                <h4 className="text-2xl font-semibold">{benefit.title}</h4>
-                <p className="text-xl text-gray-700 leading-relaxed">{benefit.description}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Testimonial */}
-        <section className="py-20">
-          <blockquote className="text-3xl italic font-light mb-6 text-gray-700 text-center">
-            "DesignFlow Pro has revolutionized how I approach my design projects. It's like having a super-powered
-            design assistant that anticipates my every need."
-          </blockquote>
-          <div className="flex items-center justify-center">
-            <img src="/placeholder.svg" alt="Sarah Chen" width={80} height={80} className="rounded-full mr-4" />
-            <div>
-              <p className="font-semibold text-xl">Sarah Chen</p>
-              <p className="text-gray-600">Lead Designer, InnovateTech</p>
+        <section class="py-20">
+          <h3 class="text-4xl font-bold mb-12 text-center">Why Designers Love DesignFlow Pro</h3>
+          <div class="space-y-12">
+            <div class="space-y-2">
+              <h4 class="text-2xl font-semibold">Intuitive Interface</h4>
+              <p class="text-xl text-gray-700 leading-relaxed">Our clean, minimalist interface is designed by designers, for designers. Every tool is exactly where you expect it to be, allowing you to focus on what matters most - your creativity.</p>
+            </div>
+            <div class="space-y-2">
+              <h4 class="text-2xl font-semibold">Smart Automation</h4>
+              <p class="text-xl text-gray-700 leading-relaxed">Say goodbye to repetitive tasks. DesignFlow Pro's AI-powered automation handles the mundane, freeing you to tackle the creative challenges that truly require your expertise.</p>
+            </div>
+            <div class="space-y-2">
+              <h4 class="text-2xl font-semibold">Seamless Collaboration</h4>
+              <p class="text-xl text-gray-700 leading-relaxed">Share your work, gather feedback, and collaborate in real-time. Our robust sharing features ensure that you're always on the same page with your team and clients.</p>
             </div>
           </div>
         </section>
 
-        {/* Pricing */}
-        <section className="py-20">
-          <div className="text-center bg-white p-12 rounded-2xl shadow-xl">
-            <h3 className="text-4xl font-bold mb-6">Invest in Your Design Future</h3>
-            <p className="text-6xl font-bold mb-6 text-blue-600">$79</p>
-            <p className="text-2xl text-gray-700 mb-8">One-time purchase, lifetime of design excellence</p>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-6 rounded-md text-xl font-bold shadow-lg hover:shadow-xl transition-all duration-300">
-              Elevate Your Design Game
-            </button>
-            <p className="mt-6 text-gray-600 text-lg">30-day money-back guarantee. No questions asked.</p>
+        <section class="py-20">
+          <blockquote class="text-3xl italic font-light mb-6 text-gray-700 text-center">
+            "DesignFlow Pro has revolutionized how I approach my design projects. It's like having a super-powered
+            design assistant that anticipates my every need."
+          </blockquote>
+          <div class="flex items-center justify-center">
+            <img src="/placeholder.svg" alt="Sarah Chen" width="80" height="80" class="rounded-full mr-4" />
+            <div>
+              <p class="font-semibold text-xl">Sarah Chen</p>
+              <p class="text-gray-600">Lead Designer, InnovateTech</p>
+            </div>
           </div>
         </section>
 
-        {/* Final CTA */}
-        <section className="text-center py-20">
-          <h2 className="text-5xl font-bold mb-6">Ready to Redefine Your Design Process?</h2>
-          <p className="text-2xl text-gray-700 mb-10 max-w-3xl mx-auto">
+        <section class="py-20">
+          <div class="text-center bg-white p-12 rounded-2xl shadow-xl">
+            <h3 class="text-4xl font-bold mb-6">Invest in Your Design Future</h3>
+            <p class="text-6xl font-bold mb-6 text-blue-600">$79</p>
+            <p class="text-2xl text-gray-700 mb-8">One-time purchase, lifetime of design excellence</p>
+            <button class="bg-blue-600 hover:bg-blue-700 text-white px-10 py-6 rounded-md text-xl font-bold shadow-lg hover:shadow-xl transition-all duration-300">
+              Elevate Your Design Game
+            </button>
+            <p class="mt-6 text-gray-600 text-lg">30-day money-back guarantee. No questions asked.</p>
+          </div>
+        </section>
+
+        <section class="text-center py-20">
+          <h2 class="text-5xl font-bold mb-6">Ready to Redefine Your Design Process?</h2>
+          <p class="text-2xl text-gray-700 mb-10 max-w-3xl mx-auto">
             Join thousands of designers who have already transformed their workflow with DesignFlow Pro. Your best
             designs are waiting to be unleashed.
           </p>
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-6 rounded-md text-xl font-bold shadow-lg hover:shadow-xl transition-all duration-300">
+          <button class="bg-blue-600 hover:bg-blue-700 text-white px-10 py-6 rounded-md text-xl font-bold shadow-lg hover:shadow-xl transition-all duration-300">
             Start Your Design Revolution
           </button>
         </section>
       </main>
 
-      <footer className="container mx-auto px-4 py-8 text-center text-gray-600">
+      <footer class="container mx-auto px-4 py-8 text-center text-gray-600">
         <p>&copy; 2025 DesignFlow Pro. Empowering designers to create without limits.</p>
       </footer>
     </div>
 
-    `;
+    Example 4:
+    <div class="min-h-screen bg-white">
+      <div class="relative h-[400px] w-full overflow-hidden bg-primary lg:h-[500px]">
+        <div class="absolute inset-0 bg-[url('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-HdC69WcwElb9wc5zZsagH7tXWF8Zxa.png')] bg-cover bg-center opacity-25" />
+        <div class="container relative flex h-full items-center justify-between">
+          <div class="space-y-4">
+            <h1 class="text-4xl font-bold tracking-tighter text-primary-foreground sm:text-5xl md:text-6xl">
+              Sunlight
+            </h1>
+            <p class="max-w-[600px] text-lg text-primary-foreground/90 sm:text-xl">
+              Yellow Sketchbook - Summer 2018
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <main class="container py-8">
+        <div class="grid gap-8 lg:grid-cols-[1fr_300px]">
+          <div class="space-y-8">
+            <div class="flex items-center gap-4">
+              <div class="rounded-full bg-primary px-3 py-1 text-sm font-medium text-primary-foreground">$3</div>
+              <div class="flex items-center gap-2">
+                <span class="font-medium">starpatches</span>
+                <div class="flex items-center">
+                  <span class="ml-2 text-sm text-muted-foreground">(3 ratings)</span>
+                </div>
+              </div>
+            </div>
+
+            <p class="text-lg text-muted-foreground">
+              A 30-page collection of sketches all themed around the colour yellow, from Summer 2018.
+            </p>
+
+            <div class="grid gap-4 sm:grid-cols-2">
+              <img
+                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-HdC69WcwElb9wc5zZsagH7tXWF8Zxa.png"
+                alt="Preview of yellow themed sketches"
+                width="500"
+                height="300"
+                class="rounded-lg object-cover"
+              />
+              <img
+                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-HdC69WcwElb9wc5zZsagH7tXWF8Zxa.png"
+                alt="Preview of yellow themed sketches"
+                width="500"
+                height="300"
+                class="rounded-lg object-cover"
+              />
+            </div>
+          </div>
+
+          <div class="space-y-6 rounded-lg border p-6">
+            <button class="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90">
+              I want this!
+            </button>
+
+            <div class="space-y-4">
+              <div class="flex justify-between">
+                <span class="text-sm font-medium">Size</span>
+                <span class="text-sm text-muted-foreground">30 MB</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-sm font-medium">Length</span>
+                <span class="text-sm text-muted-foreground">36 pages</span>
+              </div>
+            </div>
+
+            <div class="flex gap-2">
+              <button class="flex-1 justify-between" size="sm">
+                Add to wishlist
+              </button>
+              <button size="sm">
+                Share
+              </button>
+            </div>
+
+            <div class="text-center text-sm text-muted-foreground">30-day money back guarantee</div>
+
+            <div class="space-y-2">
+              <h3 class="flex items-center gap-2 font-medium">
+                Ratings
+                <div class="flex items-center">
+                  <span class="ml-1 text-sm">5 (3 ratings)</span>
+                </div>
+              </h3>
+              <div class="flex items-center gap-2">
+                <span class="w-12 text-sm">5 stars</span>
+                <div class="h-2 flex-1 rounded-full bg-muted">
+                  <div class="h-full rounded-full bg-primary w-full"></div>
+                </div>
+                <span class="w-12 text-right text-sm text-muted-foreground">100%</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="w-12 text-sm">4 stars</span>
+                <div class="h-2 flex-1 rounded-full bg-muted">
+                  <div class="h-full rounded-full bg-primary w-0"></div>
+                </div>
+                <span class="w-12 text-right text-sm text-muted-foreground">0%</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="w-12 text-sm">3 stars</span>
+                <div class="h-2 flex-1 rounded-full bg-muted">
+                  <div class="h-full rounded-full bg-primary w-0"></div>
+                </div>
+                <span class="w-12 text-right text-sm text-muted-foreground">0%</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="w-12 text-sm">2 stars</span>
+                <div class="h-2 flex-1 rounded-full bg-muted">
+                  <div class="h-full rounded-full bg-primary w-0"></div>
+                </div>
+                <span class="w-12 text-right text-sm text-muted-foreground">0%</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="w-12 text-sm">1 star</span>
+                <div class="h-2 flex-1 rounded-full bg-muted">
+                  <div class="h-full rounded-full bg-primary w-0"></div>
+                </div>
+                <span class="w-12 text-right text-sm text-muted-foreground">0%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  `;
 }
 
 export function editLandingPagePrompt(text: string, elementHtml: string) {
