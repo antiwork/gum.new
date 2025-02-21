@@ -245,7 +245,7 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
       <html>
         <head>
           <style>
-            body { 
+            body {
               margin: 0;
               display: flex;
               justify-content: center;
@@ -267,7 +267,7 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
           </style>
         </head>
         <body>
-          <textarea rows="1" placeholder="/"></textarea>
+          <textarea rows="1" placeholder="/ to make changes"></textarea>
         </body>
       </html>
     `);
@@ -361,7 +361,7 @@ function CommandBar({
         ) : (
           <div className="flex h-[40px] w-full items-center justify-start pb-[2.5px] pl-[7px] select-none">
             <p className="font-['Helvetica_Neue',_Helvetica,_Arial,_sans-serif] text-[18px] font-medium text-gray-400">
-              /
+              / to make changes
             </p>
           </div>
         )}
