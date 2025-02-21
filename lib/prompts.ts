@@ -10,12 +10,30 @@ Your response should:
 - Follow the 3-3-3 Rule: use maximum 3 font sizes, 3 font weights, and 3 colors throughout the page
 - Keep decorative styles (italics, underline, etc.) to a minimum unless intentionally required for emphasis
 
-Before you start generating the landing page, pick a color scheme (including a primary color), font, and other design elements for the page.
+Before you start generating the landing page:
+- When colors are provided, use the first color as your primary brand color, black/white (if provided) for minimalist contrast, and any additional colors for modern accents
+- When no colors are provided, pick a color scheme that matches the product's theme
+- Choose appropriate fonts and other design elements
 It is extremely important that you do not use light text on light backgrounds or dark text on dark backgrounds.
 `;
 
-export function generateLandingPagePrompt(purpose: string, productContext?: string) {
-  return `${BASE_PROMPT}
+export function generateLandingPagePrompt(purpose: string, productContext?: string, colors?: string[] | null) {
+  const colorGuidance = colors?.length
+    ? `\nUse these colors from the product image:
+    ${colors
+      .map((color, i) =>
+        i === 0
+          ? `Primary brand color: ${color}`
+          : i === 1 && color.toLowerCase().includes("fff")
+            ? `Background/contrast: ${color} (white)`
+            : i === 1 && color.toLowerCase().includes("000")
+              ? `Background/contrast: ${color} (black)`
+              : `Accent color: ${color}`,
+      )
+      .join("\n    ")}`
+    : "";
+
+  return `${BASE_PROMPT}${colorGuidance}
 
     Generate a compelling landing page for the following purpose:
     "${purpose}"
