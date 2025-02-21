@@ -267,7 +267,7 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
           </style>
         </head>
         <body>
-          <textarea rows="1"></textarea>
+          <textarea rows="1" placeholder="/"></textarea>
         </body>
       </html>
     `);
@@ -349,7 +349,6 @@ function CommandBar({
 }) {
   return (
     <div className="mx-auto flex w-1/2 min-w-md transform items-center justify-center gap-1 rounded-full bg-white px-6 py-2 text-sm text-gray-500 shadow-lg dark:bg-gray-800">
-      <Kbd symbol="/" />
       <div className="relative flex flex-1 items-center justify-center">
         {editState === "typing" ? (
           <iframe
@@ -360,10 +359,14 @@ function CommandBar({
             }}
           />
         ) : (
-          <div className="h-[40px]" />
+          <div className="flex h-[40px] w-full items-center justify-start pb-[2.5px] pl-[7px] select-none">
+            <p className="font-['Helvetica_Neue',_Helvetica,_Arial,_sans-serif] text-[18px] font-medium text-gray-400">
+              /
+            </p>
+          </div>
         )}
         <div
-          className={`absolute bottom-1.5 left-[6px] h-0.5 w-[calc(100%-12px)] ${editState === "typing" ? "bg-blue-500" : "bg-gray-500"}`}
+          className={`absolute bottom-1.5 left-[6px] h-0.5 w-[calc(100%-12px)] ${editState === "typing" ? "bg-[#ff90e8]" : "bg-gray-500"}`}
         ></div>
       </div>
       {isLoading ? (
