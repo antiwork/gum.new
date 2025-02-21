@@ -7,6 +7,8 @@ Your response should:
 - Include responsive design classes to support mobile, tablet, and desktop views
 - Add Tailwind classes for both light and dark mode
 - Preserve existing Tailwind classes when present
+- Follow the 3-3-3 Rule: use maximum 3 font sizes, 3 font weights, and 3 colors throughout the page
+- Keep decorative styles (italics, underline, etc.) to a minimum unless intentionally required for emphasis
 
 Before you start generating the landing page, pick a color scheme (including a primary color), font, and other design elements for the page.
 It is extremely important that you do not use light text on light backgrounds or dark text on dark backgrounds.
