@@ -5,6 +5,7 @@ import db from "@/db";
 import Editor from "./Editor";
 import Viewer from "./Viewer";
 import { auth } from "@/auth";
+import { trackView } from "./actions";
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -23,6 +24,10 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   if (!version) {
     notFound();
   }
+
+  // Track the view
+  await trackView(id, userId);
+
   const isOwner = gum.userId === userId;
   return isOwner ? <Editor initialHtml={version.html} gumId={id} /> : <Viewer html={version.html} />;
 }
