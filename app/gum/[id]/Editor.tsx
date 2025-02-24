@@ -274,7 +274,7 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
           </style>
         </head>
         <body>
-          <textarea rows="1" class="${editState === "idle" ? "idle" : ""}" placeholder="/ to make changes"></textarea>
+          <textarea rows="1" class="${editState === "idle" ? "idle" : ""}" placeholder="Type / to make changes"></textarea>
         </body>
       </html>
     `);
