@@ -17,12 +17,12 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   if (!gum) {
     return {
       title: "Not Found",
-      description: "This gum page could not be found",
+      description: "Gum could not be found",
     };
   }
 
   const title = gum.title || "Untitled Gum";
-  const description = gum.description || "A gum.new page";
+  const description = gum.description || null;
   const coverUrl = gum.coverUrl || null;
 
   return {
@@ -39,7 +39,6 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       card: "summary_large_image",
       title,
       description,
-      creator: "@gumroad",
     },
   };
 }
