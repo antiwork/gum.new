@@ -236,7 +236,7 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
 
   // Update iframe useEffect
   useEffect(() => {
-    if (editState === "idle" || !iframeRef.current) return;
+    if (!iframeRef.current) return;
     const iframeDoc = iframeRef.current.contentDocument;
     if (!iframeDoc) return;
     iframeDoc.open();
@@ -269,14 +269,11 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
             }
             textarea::placeholder {
               color: rgb(156, 163, 175);
-              font-weight: 600;
-              font-size: 16px;
-              font-family: Arial;
             }
           </style>
         </head>
         <body>
-          <textarea rows="1" placeholder="/ to make changes"></textarea>
+          <textarea rows="1" class="${editState === "idle" ? "idle" : ""}" placeholder="/ to make changes"></textarea>
         </body>
       </html>
     `);
@@ -284,7 +281,10 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
 
     const textarea = iframeDoc.querySelector("textarea");
     if (!textarea) return;
-    textarea.focus();
+
+    if (editState === "typing") {
+      textarea.focus();
+    }
 
     const autoResize = () => {
       textarea.style.height = "24px";
@@ -359,19 +359,13 @@ function CommandBar({
   return (
     <div className="mx-auto flex w-1/2 min-w-md transform items-center justify-center gap-1 rounded-full bg-white px-6 py-2 text-sm text-gray-500 shadow-lg dark:bg-gray-800">
       <div className="relative flex flex-1 items-center justify-center">
-        {editState === "typing" ? (
-          <iframe
-            ref={iFrameRef}
-            style={{
-              height: "40px",
-              width: "100%",
-            }}
-          />
-        ) : (
-          <div className="flex h-[40px] w-full items-center justify-start pb-[5px] pl-[7px] select-none">
-            <p className="font-[Arial] text-[16px] font-semibold text-gray-400">/ to make changes</p>
-          </div>
-        )}
+        <iframe
+          ref={iFrameRef}
+          style={{
+            height: "40px",
+            width: "100%",
+          }}
+        />
         <div
           className={`absolute bottom-1.5 left-[6px] h-0.5 w-[calc(100%-12px)] ${editState === "typing" ? "bg-[#ff90e8]" : "bg-gray-500"}`}
         ></div>
