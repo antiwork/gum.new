@@ -32,6 +32,7 @@
     "get-pixels": "^3.3.3",
     "lucide-react": "^0.474.0",
     "matter-js": "^0.20.0",
+    "motion": "^12.4.7",
     "next": "15.1.6",
     "next-auth": "^4.24.11",
     "pg": "^8.13.1",
