@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback, RefObject } from "react";
 import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 
 async function updateElement(
   text: string,
@@ -340,9 +341,14 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
             }}
           />
         </div>
-        <div className="fixed bottom-0 left-0 flex w-full pb-4">
+        <motion.div
+          className="fixed bottom-0 left-0 flex w-full pb-4"
+          initial={{ y: 100 }}
+          animate={{ y: 0 }}
+          transition={{ type: "spring", damping: 20, stiffness: 100 }}
+        >
           <CommandBar iFrameRef={iframeRef} editState={editState} isLoading={isLoading} />
-        </div>
+        </motion.div>
       </div>
     </>
   );
@@ -358,7 +364,17 @@ function CommandBar({
   isLoading: boolean;
 }) {
   return (
-    <div className="mx-auto flex w-1/2 min-w-md transform items-center justify-center gap-1 rounded-full bg-white px-6 py-2 text-sm text-gray-500 shadow-lg dark:bg-gray-800">
+    <motion.div
+      className="mx-auto flex w-1/2 min-w-md transform items-center justify-center gap-1 rounded-full bg-white px-6 py-2 text-sm text-gray-500 dark:bg-gray-800"
+      animate={editState === "typing" ? {
+        y: -8,
+        boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)"
+      } : {
+        y: 0,
+        boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)"
+      }}
+      transition={{ type: "spring", damping: 20, stiffness: 300 }}
+    >
       <div className="relative flex flex-1 items-center justify-center">
         <iframe
           ref={iFrameRef}
@@ -390,7 +406,7 @@ function CommandBar({
       ) : editState === "typing" ? (
         <Kbd symbol="↵" />
       ) : null}
-    </div>
+    </motion.div>
   );
 }
 
