@@ -6,6 +6,7 @@ import db from "@/db";
 import Editor from "./Editor";
 import Viewer from "./Viewer";
 import { auth } from "@/auth";
+import { trackView } from "./actions";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
@@ -59,6 +60,10 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   if (!version) {
     notFound();
   }
+
+  // Track the view
+  await trackView(id, userId);
+
   const isOwner = gum.userId === userId;
   return isOwner ? <Editor initialHtml={version.html} gumId={id} /> : <Viewer html={version.html} />;
 }

@@ -7,6 +7,7 @@ import { generateLandingPagePrompt } from "@/lib/prompts";
 import { auth } from "@/auth";
 import { sanitizeHtml } from "@/lib/sanitize";
 import sanitizeHtmlLib from "sanitize-html";
+import { extractImageColors } from "@/services/colors";
 
 export const maxDuration = 100;
 const DEBUG_MODE = false;
@@ -30,7 +31,14 @@ export async function POST(req: Request) {
   const purpose = lastMessage.content;
   const productInfo = lastMessage.productInfo;
   const productData = JSON.parse(productInfo);
-  const prompt = generateLandingPagePrompt(purpose, productInfo);
+
+  // Extract colors from product cover image if available
+  let extractedColors = null;
+  if (productData.preview_url) {
+    extractedColors = await extractImageColors(productData.preview_url);
+  }
+
+  const prompt = generateLandingPagePrompt(purpose, productInfo, extractedColors);
 
   if (DEBUG_MODE) {
     await new Promise((resolve) => setTimeout(resolve, 1250));
