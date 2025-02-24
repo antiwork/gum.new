@@ -254,7 +254,7 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
             textarea {
               width: 100%;
               min-height: 24px;
-              font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+              font-family: Arial, Helvetica, sans-serif;
               font-size: inherit;
               padding: 8px;
               border: none;
@@ -263,6 +263,15 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
               overflow: hidden;
               white-space: pre-wrap;
               word-wrap: break-word;
+              letter-spacing: normal;
+              padding-bottom: 5px;
+              padding-left: 7px;
+            }
+            textarea::placeholder {
+              color: rgb(156, 163, 175);
+              font-weight: 600;
+              font-size: 16px;
+              font-family: Arial;
             }
           </style>
         </head>
@@ -359,10 +368,8 @@ function CommandBar({
             }}
           />
         ) : (
-          <div className="flex h-[40px] w-full items-center justify-start pb-[2.5px] pl-[7px] select-none">
-            <p className="font-['Helvetica_Neue',_Helvetica,_Arial,_sans-serif] text-[18px] font-medium text-gray-400">
-              / to make changes
-            </p>
+          <div className="flex h-[40px] w-full items-center justify-start pb-[5px] pl-[7px] select-none">
+            <p className="font-[Arial] text-[16px] font-semibold text-gray-400">/ to make changes</p>
           </div>
         )}
         <div
