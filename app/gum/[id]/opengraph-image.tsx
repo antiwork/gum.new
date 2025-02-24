@@ -1,15 +1,26 @@
-import Logo from "@/app/components/Logo";
 import { ImageResponse } from "next/og";
+import db from "@/db";
+import Logo from "@/app/components/Logo";
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const title = searchParams.get("title");
-  const description = searchParams.get("description");
-  const decodedTitle = decodeURIComponent(title || "").trim();
-  const decodedDescription = decodeURIComponent(description || "")
-    .trim()
-    .replace(/[}]/g, "");
-  console.log(decodedTitle, decodedDescription);
+export const contentType = "image/png";
+export const size = {
+  width: 1200,
+  height: 630,
+};
+
+export default async function Image({ params }: { params: { id: string } }) {
+  // Fetch gum data
+  const gum = await db.query.gums.findFirst({
+    where: (gums, { eq }) => eq(gums.id, params.id),
+  });
+
+  if (!gum) {
+    throw new Error("Gum not found");
+  }
+
+  // TODO: Use actual gum.title and gum.description when implemented
+  const title = "Example Title";
+  const description = "Example Description about this gum";
 
   return new ImageResponse(
     (
@@ -33,10 +44,8 @@ export async function GET(request: Request) {
         >
           <Logo useTailwind={false} sizeMultiplier={3} />
         </div>
-        <p style={{ fontSize: 64, fontFamily: "GeistBold", fontWeight: 600 }}>{decodedTitle}</p>
-        <p style={{ fontSize: 36, color: "rgba(0, 0, 0, 0.5)", fontFamily: "Geist", fontWeight: 400 }}>
-          {decodedDescription}
-        </p>
+        <p style={{ fontSize: 64, fontFamily: "GeistBold", fontWeight: 600 }}>{title}</p>
+        <p style={{ fontSize: 36, color: "rgba(0, 0, 0, 0.5)", fontFamily: "Geist", fontWeight: 400 }}>{description}</p>
       </div>
     ),
     {
@@ -45,12 +54,12 @@ export async function GET(request: Request) {
       fonts: [
         {
           name: "Geist",
-          data: await loadGoogleFont("Geist", decodedDescription, 400),
+          data: await loadGoogleFont("Geist", description, 400),
           style: "normal",
         },
         {
           name: "GeistBold",
-          data: await loadGoogleFont("Geist", decodedTitle, 600),
+          data: await loadGoogleFont("Geist", title, 600),
           style: "normal",
         },
       ],

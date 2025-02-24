@@ -32,16 +32,12 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       description,
       url: `https://gum.new/gum/${gum.id}`,
       siteName: "gum.new",
-      locale: "en_US",
-      type: "website",
-      images: [`/api/gum-og?title=${encodeURIComponent(title)}&description=${encodeURIComponent(description)}`],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
       creator: "@gumroad",
-      images: [`/api/gum-og?title=${encodeURIComponent(title)}&description=${encodeURIComponent(description)}}`],
     },
   };
 }
