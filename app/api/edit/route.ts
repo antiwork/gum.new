@@ -30,7 +30,7 @@ export async function POST(req: Request) {
   const prompt = editLandingPagePrompt(text, element.html);
 
   const { partialObjectStream } = streamObject({
-    model: anthropic("claude-3-5-sonnet-20241022") || openai("gpt-4o-mini"),
+    model: anthropic("claude-3-7-sonnet-20250219") || openai("gpt-4o-mini"),
     temperature: 0.7,
     schema: z.object({
       updatedHtml: z.string().describe("The updated HTML for the element with the requested changes"),
