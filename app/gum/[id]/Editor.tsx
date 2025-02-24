@@ -266,6 +266,7 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
               letter-spacing: normal;
               padding-bottom: 5px;
               padding-left: 7px;
+              caret-color: rgb(255, 144, 232);
             }
             textarea::placeholder {
               color: rgb(156, 163, 175);
