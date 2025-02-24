@@ -21,9 +21,9 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     };
   }
 
-  // TODO: Make gum.title and gum.description useful
-  const title = "Example Title";
-  const description = "Example Description about this gum";
+  const title = gum.title || "Untitled Gum";
+  const description = gum.description || "A gum.new page";
+  const coverUrl = gum.coverUrl || null;
 
   return {
     title,
@@ -33,6 +33,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       description,
       url: `https://gum.new/gum/${gum.id}`,
       siteName: "gum.new",
+      images: coverUrl ? [{ url: coverUrl }] : undefined,
     },
     twitter: {
       card: "summary_large_image",
