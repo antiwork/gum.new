@@ -122,6 +122,28 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
     }
   };
 
+  const handleSuggestionClick = (suggestion: string) => {
+    setAbout(suggestion);
+    if (inputRef.current) {
+      inputRef.current.focus();
+
+      // Auto resize the textarea after setting new content
+      setTimeout(() => {
+        if (inputRef.current) {
+          inputRef.current.style.height = "auto";
+          inputRef.current.style.height = `${inputRef.current.scrollHeight + 8}px`; // Added padding
+        }
+      }, 0);
+    }
+  };
+
+  // Function to handle textarea input changes and auto-resize
+  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setAbout(e.target.value);
+    e.target.style.height = "auto";
+    e.target.style.height = `${e.target.scrollHeight + 8}px`; // Added padding
+  };
+
   const loggedInContent = (
     <div className="flex min-h-screen items-center justify-center bg-[#f4f4f0] dark:bg-black dark:text-white">
       <div className="absolute top-4 left-4">
@@ -138,7 +160,7 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
           ref={inputRef}
           name="about"
           placeholder="..."
-          className="mt-2 block w-full resize-none rounded-[20px] border-4 border-black px-4 py-4 text-3xl sm:px-6 sm:py-6 sm:text-4xl md:text-5xl lg:text-6xl dark:border-white dark:text-black"
+          className="resize-vertical mt-2 block w-full rounded-[20px] border-4 border-black px-4 py-4 text-3xl sm:px-6 sm:py-6 sm:text-4xl md:text-5xl lg:text-6xl dark:border-white dark:text-black"
           value={about}
           style={{
             backgroundColor: "rgba(255, 144, 232)",
@@ -146,8 +168,32 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
             paddingTop: "18px",
             paddingBottom: "18px",
           }}
-          onChange={(e) => setAbout(e.target.value)}
+          onChange={handleTextareaChange}
         />
+        <div className="mt-4 flex flex-wrap gap-2 text-base sm:text-lg md:text-xl">
+          {[
+            { text: "a neobrutalist gumroad-esque landing page", icon: "🏗️" },
+            { text: "a looooooong sales letter with a focus on conversion optimization", icon: "📝" },
+            { text: "a valentines day themed landing page", icon: "❤️" },
+            { text: "a minimalist / new york-based design agency vibe, all black and white", icon: "🌓" },
+            { text: "a retro 90s inspired showcase", icon: "🕹️" },
+            { text: "a limited-time offer page with countdown timer that expires on march 1st 2025", icon: "⏱️" },
+            { text: "an landing page with a focus on an art gallery at the top", icon: "🎨" },
+            { text: "a membership site with tiered pricing cards", icon: "💳" },
+          ].map((suggestion) => (
+            <a
+              key={suggestion.text}
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                handleSuggestionClick(suggestion.text);
+              }}
+              className="rounded-full border-2 border-black bg-white px-3 py-1 text-black transition-transform hover:scale-105 hover:cursor-pointer dark:bg-black dark:text-white"
+            >
+              {suggestion.icon} {suggestion.text}
+            </a>
+          ))}
+        </div>
         {products && products.length > 0 && (
           <>
             <div className="mt-8 text-6xl">to sell</div>
