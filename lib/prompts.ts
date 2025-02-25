@@ -35,17 +35,32 @@ export function generateLandingPagePrompt(purpose: string, productContext?: stri
 
   return `${BASE_PROMPT}${colorGuidance}
 
-    Generate a compelling landing page for the following purpose:
+    You are using the Claude 3.7 Sonnet model, which excels at analyzing content and making intelligent decisions about how to present information.
+
+    First, analyze the existing product data to determine if it already contains high-quality sales copy:
     "${purpose}"
 
     ${
       productContext
-        ? `Use this existing product data to inform the landing page content:
+        ? `Existing product data:
     ${productContext}`
         : ""
     }
 
-    Additionally, create a complete landing page that:
+    IMPORTANT ANALYSIS INSTRUCTIONS:
+    1. Carefully examine the existing product data and determine if it contains high-quality sales copy.
+    2. Consider the following factors in your analysis:
+       - Length and completeness of the copy
+       - Persuasiveness and clarity of value propositions
+       - Professional tone and language
+       - Presence of key marketing elements (benefits, features, social proof, etc.)
+    
+    DECISION MAKING:
+    - If the product already has well-crafted, lengthy sales copy: PRESERVE ALL EXISTING TEXT CONTENT. Focus only on improving the presentation through layout, styling, and visual hierarchy.
+    - If the product has minimal or bare-bones copy: Generate compelling new sales copy while maintaining any key existing messages.
+    - For products that fall in between: Preserve the strongest elements of the existing copy and enhance areas that are lacking.
+
+    Now, generate a compelling landing page that:
     - Is self-contained (excluding doctype, html, head, or body tags)
     - Follows landing page best practices
     - Maintains professional design standards while being creative
@@ -53,7 +68,7 @@ export function generateLandingPagePrompt(purpose: string, productContext?: stri
     - Appends ?wanted=true to the short_url parameter if present and uses it as the href for the CTA
     - Uses images from the product's information
     - Uses the product's name as the title of the page
-    - Uses the product's description on the page
+    - Uses the product's description on the page (preserving it if it's high-quality)
     - Uses the short_url with the ?variant query parameter set to the version's name for the version's CTA if present along with ?wanted=true
     - When there are multiple recurrences, use the ?recurrence query parameter (monthly, quarterly, yearly) to set the recurrence for a given CTA
     - The page should be optimized for SEO.
