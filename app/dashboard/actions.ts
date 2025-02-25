@@ -3,11 +3,17 @@
 import db from "@/db";
 import { gums } from "@/db/schema";
 import { sql } from "drizzle-orm";
+import { clickhouse } from "@/lib/clickhouse";
 
 export interface GumStat {
   date: string;
   gums: number;
   users: number;
+}
+
+export interface GumViewStat {
+  date: string;
+  views: number;
 }
 
 export async function getGumCreationStats(): Promise<GumStat[]> {
@@ -26,4 +32,50 @@ export async function getGumCreationStats(): Promise<GumStat[]> {
     .orderBy(sql`DATE("created_at")`);
 
   return stats;
+}
+
+export async function getGumViewStats(): Promise<GumViewStat[]> {
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+
+  try {
+    const result = await clickhouse.query({
+      query: `
+        SELECT 
+          formatDateTime(toDate(timestamp), '%b %d') as date,
+          count(*) as views
+        FROM gum_views
+        WHERE toDate(timestamp) >= toDate(?)
+        GROUP BY toDate(timestamp)
+        ORDER BY toDate(timestamp)
+      `,
+      query_params: { params: [sevenDaysAgo.toISOString()] },
+    });
+
+    const rawData = await result.json();
+
+    // Define proper types for the data structure
+    type RawViewItem = { date: string; views: number };
+
+    // Transform the raw data into the expected format
+    if (Array.isArray(rawData)) {
+      return rawData.map((item: RawViewItem) => ({
+        date: item.date,
+        views: item.views,
+      }));
+    } else if (rawData.data && Array.isArray(rawData.data)) {
+      return rawData.data.map((item: unknown) => {
+        const viewItem = item as RawViewItem;
+        return {
+          date: viewItem.date,
+          views: viewItem.views,
+        };
+      });
+    }
+
+    return [];
+  } catch (error) {
+    console.error("Error fetching gum view stats:", error);
+    return [];
+  }
 }
