@@ -64,10 +64,13 @@ export async function getGumViewStats(): Promise<GumViewStat[]> {
         views: item.views,
       }));
     } else if (rawData.data && Array.isArray(rawData.data)) {
-      return rawData.data.map((item: RawViewItem) => ({
-        date: item.date,
-        views: item.views,
-      }));
+      return rawData.data.map((item: unknown) => {
+        const viewItem = item as RawViewItem;
+        return {
+          date: viewItem.date,
+          views: viewItem.views,
+        };
+      });
     }
 
     return [];
