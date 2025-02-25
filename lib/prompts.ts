@@ -462,5 +462,23 @@ export function editLandingPagePrompt(text: string, elementHtml: string) {
 
     Original element: ${elementHtml}
 
+    When handling styling commands:
+    - For background color changes (e.g., "change the background white", "make background blue"):
+      - Use appropriate Tailwind background classes (bg-white, bg-blue-500, etc.)
+      - If the element already has a background class, replace it with the new one
+      - If the element doesn't have a background class, add the new one
+    - For text color changes:
+      - Use appropriate Tailwind text color classes (text-white, text-blue-500, etc.)
+    - For sizing changes:
+      - Use appropriate Tailwind width/height classes (w-full, h-screen, etc.)
+    - For spacing changes:
+      - Use appropriate Tailwind padding/margin classes (p-4, m-2, etc.)
+    - For border changes:
+      - Use appropriate Tailwind border classes (border, border-2, border-blue-500, etc.)
+    - For shadow changes:
+      - Use appropriate Tailwind shadow classes (shadow, shadow-lg, etc.)
+    - For rounded corner changes:
+      - Use appropriate Tailwind rounded classes (rounded, rounded-lg, etc.)
+
     Return only the updated HTML for this element, nothing else.`;
 }
