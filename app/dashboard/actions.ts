@@ -53,10 +53,24 @@ export async function getGumViewStats(): Promise<GumViewStat[]> {
     });
 
     const rawData = await result.json();
+
+    // Define proper types for the data structure
+    type RawViewItem = { date: string; views: number };
+
     // Transform the raw data into the expected format
-    return Array.isArray(rawData) 
-      ? rawData.map((item: any) => ({ date: item.date, views: item.views }))
-      : rawData.data?.map((item: any) => ({ date: item.date, views: item.views })) || [];
+    if (Array.isArray(rawData)) {
+      return rawData.map((item: RawViewItem) => ({
+        date: item.date,
+        views: item.views,
+      }));
+    } else if (rawData.data && Array.isArray(rawData.data)) {
+      return rawData.data.map((item: RawViewItem) => ({
+        date: item.date,
+        views: item.views,
+      }));
+    }
+
+    return [];
   } catch (error) {
     console.error("Error fetching gum view stats:", error);
     return [];
