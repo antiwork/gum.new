@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   }
 
   const title = gum.title || "Untitled Gum";
-  const description = gum.description || null;
+  const description = gum.description || "A gum.new gum";
   const coverUrl = gum.coverUrl || null;
 
   return {
