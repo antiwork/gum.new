@@ -462,5 +462,16 @@ export function editLandingPagePrompt(text: string, elementHtml: string) {
 
     Original element: ${elementHtml}
 
+    IMPORTANT: DO NOT modify any existing text content. The text content has been carefully crafted and should remain exactly the same.
+    
+    Focus ONLY on improving the presentation aspects such as:
+    - Layout and structure
+    - Tailwind CSS styling classes
+    - Visual hierarchy
+    - Spacing and alignment
+    - Responsive design
+    
+    The goal is to present the existing text in a better way without changing any of the actual words or content.
+    
     Return only the updated HTML for this element, nothing else.`;
 }
