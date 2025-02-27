@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState, useRef } from "react";
 import { Loader } from "@/components/ui/loader";
 import Logo from "./components/Logo";
-import { signIn } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 
 export type Product = {
   name: string;
@@ -69,6 +70,7 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
   const [textareaFontSizeClass, setTextareaFontSizeClass] = useState("text-3xl sm:text-4xl md:text-5xl lg:text-6xl");
   const defaultText = "a landing page";
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const [showLoginOverlay, setShowLoginOverlay] = useState(false);
 
   useEffect(() => {
     let index = 0;
@@ -103,6 +105,12 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // If not authenticated, show login overlay instead of submitting
+    if (!isAuthenticated) {
+      setShowLoginOverlay(true);
+      return;
+    }
 
     const messages = [
       {
@@ -188,140 +196,178 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
     e.target.scrollTop = scrollTop;
   };
 
-  const loggedInContent = (
-    <div className="flex min-h-screen items-center justify-center overflow-y-auto bg-[#f4f4f0] dark:bg-black dark:text-white">
-      <div className="absolute top-4 left-4">
-        <Logo useTailwind={false} />
-      </div>
-      {status !== "initial" ? <Loader isDoneLoading={status === "finished"} /> : null}
-      <form
-        onSubmit={handleSubmit}
-        className="font-['Helvetica Neue',Helvetica,Arial,sans-serif] absolute top-1/2 left-1/2 z-10 w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 px-4 text-3xl leading-2 font-bold text-black sm:w-[calc(100%-4rem)] sm:text-4xl md:max-w-[61%] md:text-5xl lg:text-6xl dark:text-white"
-        style={{ lineHeight: "150%" }}
-      >
-        {(!products || products.length === 0) && (
-          <div className="mb-8 rounded-[20px] border-4 border-black bg-[rgba(255,201,0,0.3)] p-4 text-xl font-normal sm:p-6 sm:text-2xl md:text-3xl lg:text-4xl dark:border-white">
-            <p className="mb-2 font-bold">⚠️ You need Gumroad products to create a landing page</p>
-            <p>
-              Please create a product on Gumroad first or wait until we support creating products directly from gum.new.
-            </p>
+  return (
+    <div className="relative">
+      <div className="flex min-h-screen items-center justify-center overflow-y-auto bg-[#f4f4f0] dark:bg-black dark:text-white">
+        <div className="absolute top-4 left-4">
+          <Logo useTailwind={false} />
+        </div>
+
+        {isAuthenticated && (
+          <div className="absolute top-4 right-4">
+            <Button
+              onClick={() => signOut()}
+              variant="outline"
+              className="rounded-full border-2 border-black bg-white px-4 py-2 text-sm font-bold text-black transition-colors hover:bg-black hover:text-white dark:border-white dark:bg-black dark:text-white dark:hover:bg-white dark:hover:text-black"
+            >
+              Logout
+            </Button>
           </div>
         )}
-        I want to make
-        <textarea
-          ref={inputRef}
-          name="about"
-          placeholder="..."
-          className={`resize-vertical mt-2 block w-full rounded-[20px] border-4 border-black px-4 py-4 ${textareaFontSizeClass} dark:border-white dark:text-black`}
-          value={about}
-          style={{
-            backgroundColor: "rgba(255, 144, 232)",
-            minHeight: "150px",
-            paddingTop: "18px",
-            paddingBottom: "18px",
-          }}
-          onChange={handleTextareaChange}
-        />
-        <div className="mt-4 flex flex-wrap gap-2 text-base sm:text-lg md:text-xl">
-          {[
-            { text: "a neobrutalist gumroad-esque landing page", icon: "🏗️" },
-            { text: "a looooooong sales letter with a focus on conversion optimization", icon: "📝" },
-            { text: "a valentines day themed landing page", icon: "❤️" },
-            { text: "a minimalist / new york-based design agency vibe, all black and white", icon: "🌓" },
-            { text: "a retro 90s inspired showcase", icon: "🕹️" },
-            { text: "a limited-time offer page with countdown timer that expires on march 1st 2025", icon: "⏱️" },
-            { text: "an landing page with a focus on an art gallery at the top", icon: "🎨" },
-            { text: "a membership site with tiered pricing cards", icon: "💳" },
-          ].map((suggestion) => (
-            <a
-              key={suggestion.text}
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                handleSuggestionClick(suggestion.text);
-              }}
-              className="rounded-full border-2 border-black bg-white px-3 py-1 text-black transition-transform hover:scale-105 hover:cursor-pointer dark:bg-black dark:text-white"
-            >
-              {suggestion.icon} {suggestion.text}
-            </a>
-          ))}
-        </div>
-        {products && products.length > 0 && (
-          <>
-            <div className="mt-8 text-6xl">to sell</div>
-            <div className="relative">
-              {!isNewProduct ? (
-                <>
-                  <select
-                    name="product"
-                    value={selectedProduct}
-                    onChange={(e) => {
-                      if (e.target.value === "new") {
-                        setIsNewProduct(true);
-                      } else {
-                        setSelectedProduct(e.target.value);
-                      }
-                    }}
-                    className={`mt-4 block w-full appearance-none rounded-[20px] border-4 border-black px-4 py-4 ${textareaFontSizeClass} dark:border-white dark:text-black`}
+
+        {status !== "initial" ? <Loader isDoneLoading={status === "finished"} /> : null}
+        <form
+          onSubmit={handleSubmit}
+          className="font-['Helvetica Neue',Helvetica,Arial,sans-serif] absolute top-1/2 left-1/2 z-10 w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 px-4 text-3xl leading-2 font-bold text-black sm:w-[calc(100%-4rem)] sm:text-4xl md:max-w-[61%] md:text-5xl lg:text-6xl dark:text-white"
+          style={{ lineHeight: "150%" }}
+        >
+          {isAuthenticated && (!products || products.length === 0) && (
+            <div className="mb-8 rounded-[20px] border-4 border-black bg-[rgba(255,201,0,0.3)] p-4 text-xl font-normal sm:p-6 sm:text-2xl md:text-3xl lg:text-4xl dark:border-white">
+              <p className="mb-2 font-bold">⚠️ You need Gumroad products to create a landing page</p>
+              <p>
+                Please create a product on Gumroad first or wait until we support creating products directly from
+                gum.new.
+              </p>
+            </div>
+          )}
+          I want to make
+          <textarea
+            ref={inputRef}
+            name="about"
+            placeholder="..."
+            className={`resize-vertical mt-2 block w-full rounded-[20px] border-4 border-black px-4 py-4 ${textareaFontSizeClass} dark:border-white dark:text-black`}
+            value={about}
+            style={{
+              backgroundColor: "rgba(255, 144, 232)",
+              minHeight: "150px",
+              paddingTop: "18px",
+              paddingBottom: "18px",
+            }}
+            onChange={handleTextareaChange}
+          />
+          <div className="mt-4 flex flex-wrap gap-2 text-base sm:text-lg md:text-xl">
+            {[
+              { text: "a neobrutalist gumroad-esque landing page", icon: "🏗️" },
+              { text: "a looooooong sales letter with a focus on conversion optimization", icon: "📝" },
+              { text: "a valentines day themed landing page", icon: "❤️" },
+              { text: "a minimalist / new york-based design agency vibe, all black and white", icon: "🌓" },
+              { text: "a retro 90s inspired showcase", icon: "🕹️" },
+              { text: "a limited-time offer page with countdown timer that expires on march 1st 2025", icon: "⏱️" },
+              { text: "an landing page with a focus on an art gallery at the top", icon: "🎨" },
+              { text: "a membership site with tiered pricing cards", icon: "💳" },
+            ].map((suggestion) => (
+              <a
+                key={suggestion.text}
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleSuggestionClick(suggestion.text);
+                }}
+                className="rounded-full border-2 border-black bg-white px-3 py-1 text-black transition-transform hover:scale-105 hover:cursor-pointer dark:bg-black dark:text-white"
+              >
+                {suggestion.icon} {suggestion.text}
+              </a>
+            ))}
+          </div>
+          {isAuthenticated && products && products.length > 0 && (
+            <>
+              <div className="mt-8 text-6xl">to sell</div>
+              <div className="relative">
+                {!isNewProduct ? (
+                  <>
+                    <select
+                      name="product"
+                      value={selectedProduct}
+                      onChange={(e) => {
+                        if (e.target.value === "new") {
+                          setIsNewProduct(true);
+                        } else {
+                          setSelectedProduct(e.target.value);
+                        }
+                      }}
+                      className={`mt-4 block w-full appearance-none rounded-[20px] border-4 border-black px-4 py-4 ${textareaFontSizeClass} dark:border-white dark:text-black`}
+                      style={{
+                        backgroundColor: "rgba(255, 201, 0)",
+                      }}
+                    >
+                      {products.map((product: Product) => (
+                        <option key={product.id} value={product.id}>
+                          {product.name}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-8">
+                      <svg className="h-12 w-12 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                      </svg>
+                    </div>
+                  </>
+                ) : (
+                  <input
+                    type="text"
+                    name="newProduct"
+                    value={newProductDetails}
+                    onChange={(e) => setNewProductDetails(e.target.value)}
+                    placeholder="a $50 course with 10 seats on developing with devin"
+                    className={`mt-4 block w-full appearance-none rounded-[20px] border-4 border-black px-6 py-6 ${textareaFontSizeClass} dark:border-white dark:text-black`}
                     style={{
                       backgroundColor: "rgba(255, 201, 0)",
                     }}
-                  >
-                    {products.map((product: Product) => (
-                      <option key={product.id} value={product.id}>
-                        {product.name}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-8">
-                    <svg className="h-12 w-12 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                      <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-                    </svg>
-                  </div>
-                </>
-              ) : (
-                <input
-                  type="text"
-                  name="newProduct"
-                  value={newProductDetails}
-                  onChange={(e) => setNewProductDetails(e.target.value)}
-                  placeholder="a $50 course with 10 seats on developing with devin"
-                  className={`mt-4 block w-full appearance-none rounded-[20px] border-4 border-black px-6 py-6 ${textareaFontSizeClass} dark:border-white dark:text-black`}
-                  style={{
-                    backgroundColor: "rgba(255, 201, 0)",
-                  }}
-                  autoFocus
-                />
-              )}
-            </div>
-          </>
-        )}
-        <Button
-          type="submit"
-          variant="outline"
-          className="mt-8 w-full cursor-pointer rounded-full border-4 border-black bg-black p-4 text-2xl font-bold text-white transition-colors hover:bg-white hover:text-black sm:p-6 sm:text-3xl md:p-8 md:text-4xl lg:text-5xl dark:border-white dark:bg-black dark:text-white dark:hover:bg-white dark:hover:text-black"
-          disabled={status !== "initial" || !products || products.length === 0}
-        >
-          {status === "generating" ? "Creating..." : "Create"}
-        </Button>
-      </form>
-    </div>
-  );
-
-  return (
-    <div className="relative">
-      <div className={`${!isAuthenticated ? "opacity-80 blur-sm" : ""}`}>{loggedInContent}</div>
-      {!isAuthenticated && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="absolute inset-0 bg-[rgba(255,144,232,0.8)] backdrop-blur-sm" />
+                    autoFocus
+                  />
+                )}
+              </div>
+            </>
+          )}
           <Button
-            onClick={() => signIn("gumroad")}
-            className="relative z-10 cursor-pointer rounded-full border-4 border-black bg-white p-4 text-2xl font-bold text-black transition-colors hover:bg-black hover:text-white sm:p-6 sm:text-3xl md:p-8 md:text-4xl lg:text-5xl dark:border-white"
+            type="submit"
+            variant="outline"
+            className="mt-8 w-full cursor-pointer rounded-full border-4 border-black bg-black p-4 text-2xl font-bold text-white transition-colors hover:bg-white hover:text-black sm:p-6 sm:text-3xl md:p-8 md:text-4xl lg:text-5xl dark:border-white dark:bg-black dark:text-white dark:hover:bg-white dark:hover:text-black"
+            disabled={status !== "initial" || (isAuthenticated && (!products || products.length === 0))}
           >
-            Login with Gumroad
+            {status === "generating" ? "Creating..." : "Create"}
           </Button>
-        </div>
-      )}
+        </form>
+      </div>
+
+      <AnimatePresence>
+        {showLoginOverlay && !isAuthenticated && (
+          <motion.div
+            className="absolute inset-0 z-10 flex items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <motion.div
+              className="absolute inset-0 bg-[rgba(255,144,232,0.8)] backdrop-blur-sm"
+              onClick={() => setShowLoginOverlay(false)}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{
+                type: "spring",
+                damping: 20,
+                stiffness: 300,
+                delay: 0.1,
+              }}
+            >
+              <Button
+                onClick={() => signIn("gumroad")}
+                className="relative z-10 cursor-pointer rounded-full border-4 border-black bg-white p-4 text-2xl font-bold text-black transition-colors hover:bg-black hover:text-white sm:p-6 sm:text-3xl md:p-8 md:text-4xl lg:text-5xl dark:border-white"
+              >
+                Login with Gumroad
+              </Button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
