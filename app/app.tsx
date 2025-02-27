@@ -61,6 +61,7 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
   const [selectedProduct, setSelectedProduct] = useState(products?.[0]?.id || "");
   const [isNewProduct, setIsNewProduct] = useState(false);
   const [newProductDetails, setNewProductDetails] = useState("");
+  const [textareaFontSizeClass, setTextareaFontSizeClass] = useState("text-3xl sm:text-4xl md:text-5xl lg:text-6xl");
   const defaultText = "a landing page";
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -71,6 +72,15 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
     const type = () => {
       if (index < defaultText.length) {
         setAbout(defaultText.slice(0, index + 1));
+        // Update font size class based on the current text length
+        const currentTextLength = defaultText.slice(0, index + 1).length;
+        if (currentTextLength > 200) {
+          setTextareaFontSizeClass("text-xl sm:text-2xl md:text-3xl lg:text-4xl");
+        } else if (currentTextLength > 100) {
+          setTextareaFontSizeClass("text-2xl sm:text-3xl md:text-4xl lg:text-5xl");
+        } else {
+          setTextareaFontSizeClass("text-3xl sm:text-4xl md:text-5xl lg:text-6xl");
+        }
         index++;
         typeInterval = setTimeout(type, Math.random() * 20 + 20);
       } else {
@@ -124,6 +134,16 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
 
   const handleSuggestionClick = (suggestion: string) => {
     setAbout(suggestion);
+
+    // Adjust font size based on suggestion text length
+    if (suggestion.length > 200) {
+      setTextareaFontSizeClass("text-xl sm:text-2xl md:text-3xl lg:text-4xl");
+    } else if (suggestion.length > 100) {
+      setTextareaFontSizeClass("text-2xl sm:text-3xl md:text-4xl lg:text-5xl");
+    } else {
+      setTextareaFontSizeClass("text-3xl sm:text-4xl md:text-5xl lg:text-6xl");
+    }
+
     if (inputRef.current) {
       inputRef.current.focus();
 
@@ -143,7 +163,18 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
 
   // Function to handle textarea input changes and auto-resize
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setAbout(e.target.value);
+    const text = e.target.value;
+    setAbout(text);
+
+    // Adjust font size based on text length
+    if (text.length > 200) {
+      setTextareaFontSizeClass("text-xl sm:text-2xl md:text-3xl lg:text-4xl");
+    } else if (text.length > 100) {
+      setTextareaFontSizeClass("text-2xl sm:text-3xl md:text-4xl lg:text-5xl");
+    } else {
+      setTextareaFontSizeClass("text-3xl sm:text-4xl md:text-5xl lg:text-6xl");
+    }
+
     // Store the current scroll position
     const scrollTop = e.target.scrollTop;
     e.target.style.height = "auto";
@@ -153,7 +184,7 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
   };
 
   const loggedInContent = (
-    <div className="flex min-h-screen items-center justify-center bg-[#f4f4f0] dark:bg-black dark:text-white">
+    <div className="flex min-h-screen items-center justify-center overflow-y-auto bg-[#f4f4f0] dark:bg-black dark:text-white">
       <div className="absolute top-4 left-4">
         <Logo useTailwind={false} />
       </div>
@@ -168,7 +199,7 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
           ref={inputRef}
           name="about"
           placeholder="..."
-          className="resize-vertical mt-2 block w-full overflow-y-auto rounded-[20px] border-4 border-black px-4 py-4 text-3xl sm:px-6 sm:py-6 sm:text-4xl md:text-5xl lg:text-6xl dark:border-white dark:text-black"
+          className={`resize-vertical mt-2 block w-full rounded-[20px] border-4 border-black px-4 py-4 ${textareaFontSizeClass} dark:border-white dark:text-black`}
           value={about}
           style={{
             backgroundColor: "rgba(255, 144, 232)",
@@ -218,7 +249,7 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
                         setSelectedProduct(e.target.value);
                       }
                     }}
-                    className="mt-4 block w-full appearance-none rounded-[20px] border-4 border-black px-4 py-4 text-3xl sm:px-6 sm:py-6 sm:text-4xl md:text-5xl lg:text-6xl dark:border-white dark:text-black"
+                    className={`mt-4 block w-full appearance-none rounded-[20px] border-4 border-black px-4 py-4 ${textareaFontSizeClass} dark:border-white dark:text-black`}
                     style={{
                       backgroundColor: "rgba(255, 201, 0)",
                     }}
@@ -242,7 +273,7 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
                   value={newProductDetails}
                   onChange={(e) => setNewProductDetails(e.target.value)}
                   placeholder="a $50 course with 10 seats on developing with devin"
-                  className="mt-4 block w-full appearance-none rounded-[20px] border-4 border-black px-6 py-6 text-6xl dark:border-white dark:text-black"
+                  className={`mt-4 block w-full appearance-none rounded-[20px] border-4 border-black px-6 py-6 ${textareaFontSizeClass} dark:border-white dark:text-black`}
                   style={{
                     backgroundColor: "rgba(255, 201, 0)",
                   }}
