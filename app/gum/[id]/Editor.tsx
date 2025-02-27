@@ -261,7 +261,7 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
               border: none;
               outline: none;
               resize: none;
-              overflow: hidden;
+              overflow-y: auto;
               white-space: pre-wrap;
               word-wrap: break-word;
               letter-spacing: normal;
@@ -289,10 +289,14 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
     }
 
     const autoResize = () => {
+      // Store the current scroll position
+      const scrollTop = textarea.scrollTop;
       textarea.style.height = "24px";
       const heightNeeded = textarea.scrollHeight;
       textarea.style.height = `${heightNeeded}px`;
       iframeRef.current!.style.height = `${heightNeeded}px`;
+      // Restore the scroll position
+      textarea.scrollTop = scrollTop;
     };
 
     // Add input event listener to track value changes and resize
