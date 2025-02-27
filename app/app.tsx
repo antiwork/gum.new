@@ -155,6 +155,14 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
         className="font-['Helvetica Neue',Helvetica,Arial,sans-serif] absolute top-1/2 left-1/2 z-10 w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 px-4 text-3xl leading-2 font-bold text-black sm:w-[calc(100%-4rem)] sm:text-4xl md:max-w-[61%] md:text-5xl lg:text-6xl dark:text-white"
         style={{ lineHeight: "150%" }}
       >
+        {(!products || products.length === 0) && (
+          <div className="mb-8 rounded-[20px] border-4 border-black bg-[rgba(255,201,0,0.3)] p-4 text-xl font-normal sm:p-6 sm:text-2xl md:text-3xl lg:text-4xl dark:border-white">
+            <p className="mb-2 font-bold">⚠️ You need Gumroad products to create a landing page</p>
+            <p>
+              Please create a product on Gumroad first or wait until we support creating products directly from gum.new.
+            </p>
+          </div>
+        )}
         I want to make
         <textarea
           ref={inputRef}
@@ -248,7 +256,7 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
           type="submit"
           variant="outline"
           className="mt-8 w-full cursor-pointer rounded-full border-4 border-black bg-black p-4 text-2xl font-bold text-white transition-colors hover:bg-white hover:text-black sm:p-6 sm:text-3xl md:p-8 md:text-4xl lg:text-5xl dark:border-white dark:bg-black dark:text-white dark:hover:bg-white dark:hover:text-black"
-          disabled={status !== "initial"}
+          disabled={status !== "initial" || !products || products.length === 0}
         >
           {status === "generating" ? "Creating..." : "Create"}
         </Button>
