@@ -5,6 +5,7 @@ import { useEffect, useState, useRef } from "react";
 import { Loader } from "@/components/ui/loader";
 import Logo from "./components/Logo";
 import { signIn } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 
 export type Product = {
   name: string;
@@ -58,7 +59,11 @@ export type RecurrencePrices = {
 export default function App({ isAuthenticated, products }: { isAuthenticated: boolean; products: Product[] }) {
   const [about, setAbout] = useState("");
   const [status, setStatus] = useState<"initial" | "generating" | "finished">("initial");
-  const [selectedProduct, setSelectedProduct] = useState(products?.[0]?.id || "");
+  const searchParams = useSearchParams();
+  const productIdParam = searchParams.get("productId");
+  // Check if the productId from the query parameter exists in the products array
+  const productExists = productIdParam && products?.some((product) => product.id === productIdParam);
+  const [selectedProduct, setSelectedProduct] = useState(productExists ? productIdParam : products?.[0]?.id || "");
   const [isNewProduct, setIsNewProduct] = useState(false);
   const [newProductDetails, setNewProductDetails] = useState("");
   const defaultText = "a landing page";
