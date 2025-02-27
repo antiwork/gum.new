@@ -130,8 +130,12 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
       // Auto resize the textarea after setting new content
       setTimeout(() => {
         if (inputRef.current) {
+          // Store the current scroll position
+          const scrollTop = inputRef.current.scrollTop;
           inputRef.current.style.height = "auto";
           inputRef.current.style.height = `${inputRef.current.scrollHeight + 8}px`; // Added padding
+          // Restore the scroll position
+          inputRef.current.scrollTop = scrollTop;
         }
       }, 0);
     }
@@ -140,8 +144,12 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
   // Function to handle textarea input changes and auto-resize
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setAbout(e.target.value);
+    // Store the current scroll position
+    const scrollTop = e.target.scrollTop;
     e.target.style.height = "auto";
     e.target.style.height = `${e.target.scrollHeight + 8}px`; // Added padding
+    // Restore the scroll position
+    e.target.scrollTop = scrollTop;
   };
 
   const loggedInContent = (
@@ -160,7 +168,7 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
           ref={inputRef}
           name="about"
           placeholder="..."
-          className="resize-vertical mt-2 block w-full rounded-[20px] border-4 border-black px-4 py-4 text-3xl sm:px-6 sm:py-6 sm:text-4xl md:text-5xl lg:text-6xl dark:border-white dark:text-black"
+          className="resize-vertical mt-2 block w-full overflow-y-auto rounded-[20px] border-4 border-black px-4 py-4 text-3xl sm:px-6 sm:py-6 sm:text-4xl md:text-5xl lg:text-6xl dark:border-white dark:text-black"
           value={about}
           style={{
             backgroundColor: "rgba(255, 144, 232)",
