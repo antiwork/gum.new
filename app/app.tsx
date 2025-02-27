@@ -58,7 +58,14 @@ export type RecurrencePrices = {
 };
 
 export default function App({ isAuthenticated, products }: { isAuthenticated: boolean; products: Product[] }) {
-  const [about, setAbout] = useState("");
+  const [about, setAbout] = useState(() => {
+    // Check if running in browser environment
+    if (typeof window !== "undefined") {
+      const savedAbout = localStorage.getItem("gumNewAbout");
+      return savedAbout || "";
+    }
+    return "";
+  });
   const [status, setStatus] = useState<"initial" | "generating" | "finished">("initial");
   const searchParams = useSearchParams();
   const productIdParam = searchParams.get("productId");
@@ -67,12 +74,33 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
   const [selectedProduct, setSelectedProduct] = useState(productExists ? productIdParam : products?.[0]?.id || "");
   const [isNewProduct, setIsNewProduct] = useState(false);
   const [newProductDetails, setNewProductDetails] = useState("");
-  const [textareaFontSizeClass, setTextareaFontSizeClass] = useState("text-3xl sm:text-4xl md:text-5xl lg:text-6xl");
+  const [textareaFontSizeClass, setTextareaFontSizeClass] = useState(() => {
+    // Set initial font size based on text length from localStorage
+    if (typeof window !== "undefined") {
+      const savedAbout = localStorage.getItem("gumNewAbout") || "";
+      if (savedAbout.length > 200) {
+        return "text-xl sm:text-2xl md:text-3xl lg:text-4xl";
+      } else if (savedAbout.length > 100) {
+        return "text-2xl sm:text-3xl md:text-4xl lg:text-5xl";
+      }
+    }
+    return "text-3xl sm:text-4xl md:text-5xl lg:text-6xl";
+  });
   const defaultText = "a landing page";
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [showLoginOverlay, setShowLoginOverlay] = useState(false);
 
   useEffect(() => {
+    // Save about value to localStorage whenever it changes
+    if (about) {
+      localStorage.setItem("gumNewAbout", about);
+    }
+  }, [about]);
+
+  useEffect(() => {
+    // Skip the typing animation if we've restored text from localStorage
+    if (about) return;
+
     let index = 0;
     let typeInterval: NodeJS.Timeout;
 
@@ -101,6 +129,18 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
     typeInterval = setTimeout(type, Math.random() * 100 + 30);
 
     return () => clearTimeout(typeInterval);
+  }, []);
+
+  // Auto-resize textarea on initial render when loading from localStorage
+  useEffect(() => {
+    if (about && inputRef.current) {
+      setTimeout(() => {
+        if (inputRef.current) {
+          inputRef.current.style.height = "auto";
+          inputRef.current.style.height = `${inputRef.current.scrollHeight + 8}px`;
+        }
+      }, 0);
+    }
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -136,6 +176,10 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
 
       const { id } = await response.json();
       setStatus("finished");
+
+      // Clear localStorage after successful submission
+      localStorage.removeItem("gumNewAbout");
+
       setTimeout(() => {
         window.location.href = `/gum/${id}`;
       }, 1000);
