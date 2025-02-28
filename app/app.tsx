@@ -5,8 +5,8 @@ import { useEffect, useState, useRef } from "react";
 import { Loader } from "@/components/ui/loader";
 import Logo from "./components/Logo";
 import { signIn, signOut } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { TemplateSelector } from "./components/TemplateSelector";
 
 export type Product = {
   name: string;
@@ -67,34 +67,13 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
     return "";
   });
   const [status, setStatus] = useState<"initial" | "generating" | "finished">("initial");
-
-  // Use a different approach to get URL parameters
-  const [productIdParam, setProductIdParam] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Get URL parameters on the client side
-    if (typeof window !== "undefined") {
-      const urlParams = new URLSearchParams(window.location.search);
-      setProductIdParam(urlParams.get("productId"));
-    }
-  }, []);
-
+  const searchParams = useSearchParams();
+  const productIdParam = searchParams.get("productId");
   // Check if the productId from the query parameter exists in the products array
   const productExists = productIdParam && products?.some((product) => product.id === productIdParam);
-  const [selectedProduct, setSelectedProduct] = useState("");
-
-  // Set the selected product once we have the productIdParam
-  useEffect(() => {
-    if (productExists) {
-      setSelectedProduct(productIdParam!);
-    } else if (products?.length > 0) {
-      setSelectedProduct(products[0].id);
-    }
-  }, [productIdParam, products, productExists]);
-
+  const [selectedProduct, setSelectedProduct] = useState(productExists ? productIdParam : products?.[0]?.id || "");
   const [isNewProduct, setIsNewProduct] = useState(false);
   const [newProductDetails, setNewProductDetails] = useState("");
-  const [selectedTemplateIds, setSelectedTemplateIds] = useState<string[]>([]);
   const [textareaFontSizeClass, setTextareaFontSizeClass] = useState(() => {
     // Set initial font size based on text length from localStorage
     if (typeof window !== "undefined") {
@@ -179,7 +158,6 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
         productInfo: JSON.stringify(
           isNewProduct ? newProductDetails : (products?.find((p) => p.id === selectedProduct) ?? ""),
         ),
-        selectedTemplateIds,
       },
     ];
 
@@ -260,11 +238,6 @@ export default function App({ isAuthenticated, products }: { isAuthenticated: bo
     e.target.style.height = `${e.target.scrollHeight + 8}px`; // Added padding
     // Restore the scroll position
     e.target.scrollTop = scrollTop;
-  };
-
-  // Function to handle template selection
-  const handleTemplatesSelected = (templateIds: string[]) => {
-    setSelectedTemplateIds(templateIds);
   };
 
   return (

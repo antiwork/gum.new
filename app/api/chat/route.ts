@@ -30,7 +30,6 @@ export async function POST(req: Request) {
   const lastMessage = messages[messages.length - 1];
   const purpose = lastMessage.content;
   const productInfo = lastMessage.productInfo;
-  const selectedTemplateIds = lastMessage.selectedTemplateIds || []; // Get selected template IDs from the message
   const productData = JSON.parse(productInfo);
 
   // Extract colors from product cover image if available
@@ -39,7 +38,7 @@ export async function POST(req: Request) {
     extractedColors = await extractImageColors(productData.preview_url);
   }
 
-  const prompt = generateLandingPagePrompt(purpose, productInfo, extractedColors, selectedTemplateIds);
+  const prompt = generateLandingPagePrompt(purpose, productInfo, extractedColors);
 
   if (DEBUG_MODE) {
     await new Promise((resolve) => setTimeout(resolve, 1250));
@@ -61,7 +60,7 @@ export async function POST(req: Request) {
 
   const { partialObjectStream } = streamObject({
     model: anthropic("claude-3-7-sonnet-20250219") || openai("gpt-4o-mini"),
-    temperature: 0.7,
+    temperature: 1,
     schema: z.object({
       landingPage: z.string().describe("A landing page using HTML with Tailwind CSS classes"),
     }),

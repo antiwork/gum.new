@@ -47,21 +47,22 @@ export function generateLandingPagePrompt(
     const selectedTemplates = TEMPLATES.filter((template) => selectedTemplateIds.includes(template.id));
 
     if (selectedTemplates.length > 0) {
-      templatesSection = `\nHere are the specific templates you should use as inspiration for your design:
+      templatesSection = `\n\nINSPIRATION TEMPLATES:
+      Below are selected design templates for inspiration. Mix and match elements from these templates based on their purposes and styles to create a cohesive design that matches the product's needs:
 
       ${selectedTemplates
         .map(
-          (template: TemplateInfo, index: number) =>
-            `Template ${index + 1} (${template.name} - ${template.description}):
+          (template: TemplateInfo) =>
+            `${template.name} - ${template.description}:
         ${template.content}`,
         )
         .join("\n\n")}
 
-      Use elements and styles from these templates, mixing and remixing them as needed to create a cohesive design that matches the product's purpose.`;
+      Combine design patterns, layouts, and UI elements from these templates as appropriate. Draw inspiration from their strengths while ensuring the final design is unified and tailored to the product's specific requirements.`;
     }
   }
 
-  return `${BASE_PROMPT}${colorGuidance}${templatesSection}
+  return `${BASE_PROMPT}${colorGuidance}
 
     You are using the Claude 3.7 Sonnet model, which excels at analyzing content and making intelligent decisions about how to present information.
 
@@ -99,7 +100,7 @@ export function generateLandingPagePrompt(
     - Uses the product's description on the page (preserving it if it's high-quality)
     - Uses the short_url with the ?variant query parameter set to the version's name for the version's CTA if present along with ?wanted=true
     - When there are multiple recurrences, use the ?recurrence query parameter (monthly, quarterly, yearly) to set the recurrence for a given CTA
-    - The page should be optimized for SEO.`;
+    - The page should be optimized for SEO.${templatesSection}`;
 }
 
 export function editLandingPagePrompt(text: string, elementHtml: string) {
