@@ -52,12 +52,116 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
   const [selectedElement, setSelectedElement] = useState<HTMLElement | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [editState, setEditState] = useState<"idle" | "typing">("idle");
+  // isDragging state is used for visual feedback when dragging files
+  const [, setIsDragging] = useState(false);
   const inputValueRef = useRef("");
 
   const resultsRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [currentHtml, setCurrentHtml] = useState(initialHtml);
+
+  const handleImageReplace = useCallback(
+    async (file: File) => {
+      if (!selectedElement || selectedElement.tagName !== "IMG" || !resultsRef.current) return;
+
+      try {
+        setIsLoading(true);
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to upload image");
+        }
+
+        const data = await response.json();
+
+        // Update the src attribute of the selected image
+        const imgElement = selectedElement as HTMLImageElement;
+        imgElement.src = data.url;
+
+        // Update the HTML in the database
+        const updatedHtml = await updateElement(
+          `Replace image with uploaded file`,
+          {
+            html: selectedElement.outerHTML,
+            tagName: selectedElement.tagName,
+            textContent: selectedElement.textContent || "",
+          },
+          resultsRef.current.innerHTML,
+          gumId,
+        );
+
+        setCurrentHtml(updatedHtml);
+        setEditState("idle");
+        setSelectedElement(null);
+      } catch (error) {
+        console.error("Failed to replace image:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [selectedElement, resultsRef, setIsLoading, setEditState, setCurrentHtml, setSelectedElement, gumId],
+  );
+
+  const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+  }, []);
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      setIsDragging(false);
+
+      if (!selectedElement || selectedElement.tagName !== "IMG") return;
+
+      const files = e.dataTransfer.files;
+      if (files.length === 0) return;
+
+      const file = files[0];
+      if (!file.type.startsWith("image/")) return;
+
+      handleImageReplace(file);
+    },
+    [selectedElement, handleImageReplace],
+  );
+
+  const handleReplaceButtonClick = useCallback(() => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  }, [fileInputRef]);
+
+  const handleFileInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = e.target.files;
+      if (!files || files.length === 0) return;
+
+      const file = files[0];
+      if (!file.type.startsWith("image/")) return;
+
+      handleImageReplace(file);
+
+      // Reset the file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    },
+    [handleImageReplace],
+  );
 
   const handleSelection = () => {
     const selection = window.getSelection();
@@ -79,13 +183,13 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
       const contentElement = elements.find((el) => {
         if (!(el instanceof HTMLElement)) return false;
         if (!resultsRef.current?.contains(el)) return false;
-        return ["DIV", "H1", "H2", "P", "BUTTON", "A", "LI"].includes(el.tagName);
+        return ["DIV", "H1", "H2", "P", "BUTTON", "A", "LI", "IMG"].includes(el.tagName);
       }) as HTMLElement | undefined;
 
       if (!resultsRef.current) return;
 
       // Clear previous hover outlines
-      const allElements = resultsRef.current.querySelectorAll("div, h1, h2, p, button, a, li");
+      const allElements = resultsRef.current.querySelectorAll("div, h1, h2, p, button, a, li, img");
       allElements.forEach((el) => {
         if (el !== selectedElement) {
           (el as HTMLElement).style.outline = "none";
@@ -106,7 +210,7 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
       const contentElement = elements.find((el) => {
         if (!(el instanceof HTMLElement)) return false;
         if (!resultsRef.current?.contains(el)) return false;
-        return ["DIV", "H1", "H2", "H3", "H4", "H5", "H6", "P", "BUTTON", "A", "LI"].includes(el.tagName);
+        return ["DIV", "H1", "H2", "H3", "H4", "H5", "H6", "P", "BUTTON", "A", "LI", "IMG"].includes(el.tagName);
       }) as HTMLElement | undefined;
       if (!contentElement) return;
       e.preventDefault();
@@ -328,18 +432,74 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
       document.removeEventListener("selectionchange", handleSelection);
     };
   }, []);
+  // Add image hover effect
+  useEffect(() => {
+    if (!resultsRef.current) return;
+
+    const style = document.createElement("style");
+    style.textContent = `
+      .results-container img {
+        transition: all 0.2s ease-in-out;
+        position: relative;
+      }
+      .results-container img:hover {
+        outline: 2px solid rgba(255, 144, 232, 0.5);
+        cursor: pointer;
+      }
+      .results-container .image-container {
+        position: relative;
+        display: inline-block;
+      }
+      .results-container .image-container:hover .image-replace-overlay {
+        opacity: 1;
+      }
+      .results-container .image-replace-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.3);
+        opacity: 0;
+        transition: opacity 0.2s ease-in-out;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Add class to results container
+    resultsRef.current.classList.add("results-container");
+
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, [resultsRef]);
 
   return (
     <>
       {/* eslint-disable-next-line @next/next/no-sync-scripts */}
       <script src="https://cdn.tailwindcss.com"></script>
       <div className="min-h-screen bg-[#f4f4f0] dark:bg-black dark:text-white">
-        <div ref={resultsRef} className="relative min-h-screen w-full">
+        <div
+          ref={resultsRef}
+          className="relative min-h-screen w-full"
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+        >
           <div
             dangerouslySetInnerHTML={{
               __html: currentHtml,
             }}
           />
+          {selectedElement && selectedElement.tagName === "IMG" && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <ImageReplaceButton onReplace={handleReplaceButtonClick} />
+            </div>
+          )}
+          <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileInputChange} />
         </div>
         <motion.div
           className="fixed bottom-0 left-0 flex w-full pb-4"
@@ -419,5 +579,16 @@ function Kbd({ symbol }: { symbol: string }) {
     <kbd className="rounded-lg border border-gray-200 bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-800 dark:border-gray-500 dark:bg-gray-600 dark:text-gray-100">
       {symbol}
     </kbd>
+  );
+}
+
+function ImageReplaceButton({ onReplace }: { onReplace: () => void }) {
+  return (
+    <button
+      onClick={onReplace}
+      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform rounded-md bg-white px-4 py-2 text-black opacity-0 shadow-md transition-all duration-200 group-hover:opacity-100 hover:bg-gray-100"
+    >
+      Replace
+    </button>
   );
 }
