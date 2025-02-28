@@ -109,13 +109,6 @@ export const Loader = ({ isDoneLoading }: { isDoneLoading: boolean }) => {
     if (!engineRef.current) return;
 
     const interval = setInterval(() => {
-      // Check if any coins are above the viewport
-      const hasSpaceForMoreCoins = coins.every((coin) => coin.position.y > COIN_SIZE);
-
-      if (!hasSpaceForMoreCoins) {
-        return;
-      }
-
       const angle = Math.random() * Math.PI * 2;
       const newCoin = Matter.Bodies.circle(
         Math.random() * window.innerWidth,
