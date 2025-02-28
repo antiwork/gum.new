@@ -15,6 +15,9 @@ Before you start generating the landing page:
 - When no colors are provided, pick a color scheme that matches the product's theme
 - Choose appropriate fonts and other design elements
 It is extremely important that you do not use light text on light backgrounds or dark text on dark backgrounds.
+
+IMPORTANT TIME INFORMATION:
+- The current year is ${new Date().getFullYear()}. Always use this as the current year in copyright notices, date references, or any content that mentions the current year.
 `;
 
 // Import at the top level to avoid require() calls
