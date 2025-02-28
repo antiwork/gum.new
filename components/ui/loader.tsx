@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import Matter from "matter-js";
 
 const COIN_SIZE = 100;
-const ADD_COIN_INTERVAL = 50;
+const ADD_COIN_INTERVAL = 100;
 
 export const Loader = ({ isDoneLoading }: { isDoneLoading: boolean }) => {
   const sceneRef = useRef<HTMLDivElement>(null);
