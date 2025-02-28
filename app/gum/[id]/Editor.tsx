@@ -63,7 +63,7 @@ async function deleteElement(
     const normalizedOriginal = element.html.replace(/\s+/g, " ").trim();
     const normalizedFullHtml = fullHtml.replace(/\s+/g, " ").trim();
     // We don't use newHtml directly as we're using the API response
-    normalizedFullHtml.replace(normalizedOriginal, "");
+    const newHtml = normalizedFullHtml.replace(normalizedOriginal, "");
 
     const response = await fetch("/api/edit", {
       method: "POST",
