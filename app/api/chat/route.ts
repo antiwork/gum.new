@@ -60,9 +60,11 @@ export async function POST(req: Request) {
 
   const { partialObjectStream } = streamObject({
     model: anthropic("claude-3-7-sonnet-20250219") || openai("gpt-4o-mini"),
-    temperature: 0.7,
+    temperature: 0.75,
     schema: z.object({
-      landingPage: z.string().describe("A landing page using HTML with Tailwind CSS classes"),
+      landingPage: z
+        .string()
+        .describe("A landing page using HTML with Tailwind CSS classes, always start with <div class="),
     }),
     prompt,
   });
