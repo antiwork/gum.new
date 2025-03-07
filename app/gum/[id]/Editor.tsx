@@ -56,6 +56,8 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
   const [editState, setEditState] = useState<"idle" | "typing">("idle");
   const inputValueRef = useRef("");
   const [currentVersionId, setCurrentVersionId] = useState<string | null>(null);
+  const [hasPreviousVersion, setHasPreviousVersion] = useState(false);
+  const [hasNextVersion, setHasNextVersion] = useState(false);
 
   const resultsRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -71,6 +73,14 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
         }
         const version = await response.json();
         setCurrentVersionId(version.id);
+
+        // Check if there's a parent version
+        const parentResponse = await fetch(`/api/gum/${gumId}/version/${version.id}/parent`);
+        setHasPreviousVersion(parentResponse.ok);
+
+        // Check if there's a child version
+        const childResponse = await fetch(`/api/gum/${gumId}/version/${version.id}/child`);
+        setHasNextVersion(childResponse.ok);
       } catch (error) {
         console.error("Failed to fetch initial version:", error);
       }
@@ -80,13 +90,14 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
 
   // Handle undo action
   const handleUndo = useCallback(async () => {
-    if (!currentVersionId) return;
+    if (!currentVersionId || !hasPreviousVersion) return;
     try {
       setIsLoading(true);
       const response = await fetch(`/api/gum/${gumId}/version/${currentVersionId}/parent`);
       if (!response.ok) {
         if (response.status === 404) {
           console.log("No previous version available");
+          setHasPreviousVersion(false);
           return;
         }
         throw new Error(`Failed to fetch parent version: ${response.statusText}`);
@@ -94,22 +105,30 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
       const parentVersion = await response.json();
       setCurrentVersionId(parentVersion.id);
       setCurrentHtml(parentVersion.html);
+
+      // Check if the new current version has a parent
+      const parentResponse = await fetch(`/api/gum/${gumId}/version/${parentVersion.id}/parent`);
+      setHasPreviousVersion(parentResponse.ok);
+
+      // After undoing, there's always a next version (the one we came from)
+      setHasNextVersion(true);
     } catch (error) {
       console.error("Failed to undo:", error);
     } finally {
       setIsLoading(false);
     }
-  }, [currentVersionId, gumId, setCurrentHtml, setIsLoading]);
+  }, [currentVersionId, gumId, hasPreviousVersion, setCurrentHtml, setIsLoading]);
 
   // Handle redo action
   const handleRedo = useCallback(async () => {
-    if (!currentVersionId) return;
+    if (!currentVersionId || !hasNextVersion) return;
     try {
       setIsLoading(true);
       const response = await fetch(`/api/gum/${gumId}/version/${currentVersionId}/child`);
       if (!response.ok) {
         if (response.status === 404) {
           console.log("No next version available");
+          setHasNextVersion(false);
           return;
         }
         throw new Error(`Failed to fetch child version: ${response.statusText}`);
@@ -117,12 +136,19 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
       const childVersion = await response.json();
       setCurrentVersionId(childVersion.id);
       setCurrentHtml(childVersion.html);
+
+      // Check if the new current version has a child
+      const childResponse = await fetch(`/api/gum/${gumId}/version/${childVersion.id}/child`);
+      setHasNextVersion(childResponse.ok);
+
+      // After redoing, there's always a previous version (the one we came from)
+      setHasPreviousVersion(true);
     } catch (error) {
       console.error("Failed to redo:", error);
     } finally {
       setIsLoading(false);
     }
-  }, [currentVersionId, gumId, setCurrentHtml, setIsLoading]);
+  }, [currentVersionId, gumId, hasNextVersion, setCurrentHtml, setIsLoading]);
 
   const handleSelection = () => {
     const selection = window.getSelection();
@@ -439,6 +465,8 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
             isLoading={isLoading}
             onUndo={handleUndo}
             onRedo={handleRedo}
+            hasPreviousVersion={hasPreviousVersion}
+            hasNextVersion={hasNextVersion}
           />
         </motion.div>
       </div>
@@ -452,12 +480,16 @@ function CommandBar({
   isLoading,
   onUndo,
   onRedo,
+  hasPreviousVersion,
+  hasNextVersion,
 }: {
   iFrameRef: RefObject<HTMLIFrameElement | null>;
   editState: "idle" | "typing";
   isLoading: boolean;
   onUndo: () => void;
   onRedo: () => void;
+  hasPreviousVersion: boolean;
+  hasNextVersion: boolean;
 }) {
   return (
     <motion.div
@@ -502,16 +534,22 @@ function CommandBar({
         <div className="flex items-center gap-2">
           <button
             onClick={onUndo}
-            className="flex items-center gap-1 rounded-md px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-700"
+            className={`flex items-center gap-1 rounded-md px-2 py-1 ${
+              hasPreviousVersion ? "hover:bg-gray-100 dark:hover:bg-gray-700" : "cursor-not-allowed opacity-50"
+            }`}
             aria-label="Undo"
+            disabled={!hasPreviousVersion}
           >
             <Kbd symbol="⌘Z" />
             <span>undo</span>
           </button>
           <button
             onClick={onRedo}
-            className="flex items-center gap-1 rounded-md px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-700"
+            className={`flex items-center gap-1 rounded-md px-2 py-1 ${
+              hasNextVersion ? "hover:bg-gray-100 dark:hover:bg-gray-700" : "cursor-not-allowed opacity-50"
+            }`}
             aria-label="Redo"
+            disabled={!hasNextVersion}
           >
             <Kbd symbol="⌘⇧Z" />
             <span>redo</span>
