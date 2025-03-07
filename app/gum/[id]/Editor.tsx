@@ -471,7 +471,6 @@ function CommandBar({
             </button>
           )}
         </>
-
       ) : editState === "typing" ? (
         <Kbd symbol="↵" />
       ) : null}
