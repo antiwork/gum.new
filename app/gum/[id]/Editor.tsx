@@ -135,6 +135,7 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
       document.head.removeChild(style);
     };
   }, []);
+
   // Handle keyboard shortcuts if the input isn't focused
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
