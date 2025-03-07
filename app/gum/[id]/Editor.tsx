@@ -58,12 +58,6 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
 
   const [currentHtml, setCurrentHtml] = useState(initialHtml);
 
-  const handleSelection = () => {
-    const selection = window.getSelection();
-    if (!selection || selection.isCollapsed) return;
-    setEditState("typing");
-  };
-
   // Add hover and click handlers for content elements
   useEffect(() => {
     if (!resultsRef.current) return;
@@ -126,15 +120,10 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
     };
   }, [editState, selectedElement]);
 
-  // Add custom selection color styles and progress animation
+  // Add progress animation
   useEffect(() => {
     const style = document.createElement("style");
     style.textContent = `
-      ::selection {
-        background-color: rgb(255, 144, 232);
-        color: black;
-      }
-      
       @keyframes progressAnimation {
         0% { width: 0%; }
         60% { width: 80%; }
@@ -146,7 +135,6 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
       document.head.removeChild(style);
     };
   }, []);
-
   // Handle keyboard shortcuts if the input isn't focused
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -326,14 +314,6 @@ export default function Editor({ initialHtml, gumId }: { initialHtml: string; gu
     };
   }, [editState, selectedElement, handleInputKeyDown]);
 
-  // Add selection change listener
-  useEffect(() => {
-    document.addEventListener("selectionchange", handleSelection);
-    return () => {
-      document.removeEventListener("selectionchange", handleSelection);
-    };
-  }, []);
-
   return (
     <>
       {/* eslint-disable-next-line @next/next/no-sync-scripts */}
@@ -409,8 +389,7 @@ function CommandBar({
       </div>
       {editState === "idle" ? (
         <span className="flex items-center gap-1">
-          or <span style={{ backgroundColor: "rgb(255, 144, 232)", color: "black" }}>Highlight</span> or{" "}
-          <span className="text-black dark:text-white">Click</span>
+          or <span className="text-black dark:text-white">Click</span>
         </span>
       ) : editState === "typing" ? (
         <Kbd symbol="↵" />
