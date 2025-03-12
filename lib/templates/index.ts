@@ -3,6 +3,7 @@ import { EXAMPLE2, EXAMPLE2_NAME, EXAMPLE2_DESCRIPTION } from "./example2";
 import { EXAMPLE3, EXAMPLE3_NAME, EXAMPLE3_DESCRIPTION } from "./example3";
 import { EXAMPLE4, EXAMPLE4_NAME, EXAMPLE4_DESCRIPTION } from "./example4";
 import { EXAMPLE5, EXAMPLE5_NAME, EXAMPLE5_DESCRIPTION } from "./example5";
+import { EXAMPLE6, EXAMPLE6_NAME, EXAMPLE6_DESCRIPTION } from "./example6";
 
 export type TemplateInfo = {
   id: string;
@@ -41,5 +42,11 @@ export const TEMPLATES: TemplateInfo[] = [
     name: EXAMPLE5_NAME,
     description: EXAMPLE5_DESCRIPTION,
     content: EXAMPLE5,
+  },
+  {
+    id: "example6",
+    name: EXAMPLE6_NAME,
+    description: EXAMPLE6_DESCRIPTION,
+    content: EXAMPLE6,
   },
 ];
