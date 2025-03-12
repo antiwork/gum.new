@@ -50,20 +50,22 @@ export async function getGumViewStats(): Promise<GumViewStat[]> {
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
 
   try {
+    // Modified to match the working weekly view stats query structure
+    // Removed query_params and directly embedded the date in the query
     const result = await clickhouse.query({
       query: `
         SELECT 
           formatDateTime(toDate(timestamp), '%b %d') as date,
           count(*) as views
         FROM gum_views
-        WHERE toDate(timestamp) >= toDate(?)
+        WHERE toDate(timestamp) >= toDate('${sevenDaysAgo.toISOString()}')
         GROUP BY toDate(timestamp)
         ORDER BY toDate(timestamp)
       `,
-      query_params: { params: [sevenDaysAgo.toISOString()] },
     });
 
     const rawData = await result.json();
+    console.log("Daily view stats raw data:", JSON.stringify(rawData, null, 2));
 
     // Define proper types for the data structure
     type RawViewItem = { date: string; views: number };
@@ -124,6 +126,7 @@ export async function getWeeklyGumViewStats(): Promise<WeeklyGumViewStat[]> {
     });
 
     const rawData = await result.json();
+    console.log("Weekly view stats raw data:", JSON.stringify(rawData, null, 2));
 
     // Define proper types for the data structure
     type RawWeeklyViewItem = { week: string; views: number };
