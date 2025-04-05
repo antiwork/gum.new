@@ -21,7 +21,7 @@ jobs:
 
       - uses: ruby/setup-ruby@v1
         env:
-          BUNDLE_GEMS__CONTRIBSYS__COM: "c9d1d5f9:d0cc622a"
+          BUNDLE_GEMS__CONTRIBSYS__COM: ${{ secrets.CONTRIBSYS_CREDENTIALS }}
         with:
           bundler-cache: true
 
