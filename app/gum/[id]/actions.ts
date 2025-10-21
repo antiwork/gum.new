@@ -1,5 +1,5 @@
 import { headers } from "next/headers";
-import { trackGumView } from "@/lib/clickhouse";
+import { trackGumView } from "@/lib/analytics";
 
 export async function trackView(gumId: string, userId?: string) {
   const headersList = await headers();

@@ -121,3 +121,22 @@ export const versions = pgTable(
     }),
   ],
 );
+
+export const gumViews = pgTable(
+  "gum_views",
+  {
+    id: text().primaryKey().notNull().$defaultFn(cuid),
+    gumId: text("gum_id")
+      .notNull()
+      .references(() => gums.id, { onDelete: "cascade" }),
+    userId: text("user_id").references(() => users.id, { onDelete: "set null" }),
+    timestamp: timestamp("timestamp", { precision: 3, mode: "date" }).defaultNow().notNull(),
+    ip: text("ip"),
+    userAgent: text("user_agent"),
+  },
+  (table) => [
+    index("idx_gum_views_gum_id").on(table.gumId),
+    index("idx_gum_views_timestamp").on(table.timestamp),
+    index("idx_gum_views_user_id").on(table.userId),
+  ],
+);
