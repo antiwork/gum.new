@@ -1,7 +1,4 @@
-import { anthropic } from "@ai-sdk/anthropic";
-import { openai } from "@ai-sdk/openai";
-import { streamObject } from "ai";
-import { z } from "zod";
+import Anthropic from "@anthropic-ai/sdk";
 import { createGum } from "@/services/gums";
 import { generateLandingPagePrompt } from "@/lib/prompts";
 import { auth } from "@/auth";
@@ -58,22 +55,25 @@ export async function POST(req: Request) {
     });
   }
 
-  const { partialObjectStream } = streamObject({
-    model: anthropic("claude-3-7-sonnet-20250219") || openai("gpt-4o-mini"),
+  const client = new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY,
+  });
+
+  const message = await client.messages.create({
+    model: "claude-3-7-sonnet-20250219",
+    max_tokens: 8000,
     temperature: 0.75,
-    schema: z.object({
-      landingPage: z
-        .string()
-        .describe("A landing page using HTML with Tailwind CSS classes, always start with <div class="),
-    }),
-    prompt,
+    messages: [
+      {
+        role: "user",
+        content: prompt,
+      },
+    ],
   });
 
   let landingPage = "";
-  for await (const partialObject of partialObjectStream) {
-    if (partialObject.landingPage) {
-      landingPage = partialObject.landingPage;
-    }
+  if (message.content[0].type === "text") {
+    landingPage = message.content[0].text;
   }
 
   // Sanitize the AI-generated HTML, blocking any JavaScript execution vectors

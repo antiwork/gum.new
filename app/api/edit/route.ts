@@ -1,7 +1,4 @@
-import { anthropic } from "@ai-sdk/anthropic";
-import { openai } from "@ai-sdk/openai";
-import { streamObject } from "ai";
-import { z } from "zod";
+import Anthropic from "@anthropic-ai/sdk";
 import { editLandingPagePrompt } from "@/lib/prompts";
 import { createVersion } from "@/services/versions";
 import { auth } from "@/auth";
@@ -29,20 +26,25 @@ export async function POST(req: Request) {
 
   const prompt = editLandingPagePrompt(text, element.html);
 
-  const { partialObjectStream } = streamObject({
-    model: anthropic("claude-3-7-sonnet-20250219") || openai("gpt-4o-mini"),
+  const client = new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY,
+  });
+
+  const message = await client.messages.create({
+    model: "claude-3-7-sonnet-20250219",
+    max_tokens: 8000,
     temperature: 0.7,
-    schema: z.object({
-      updatedHtml: z.string().describe("The updated HTML for the element with the requested changes"),
-    }),
-    prompt,
+    messages: [
+      {
+        role: "user",
+        content: prompt,
+      },
+    ],
   });
 
   let updatedHtml = "";
-  for await (const partialObject of partialObjectStream) {
-    if (partialObject.updatedHtml) {
-      updatedHtml = partialObject.updatedHtml.trim();
-    }
+  if (message.content[0].type === "text") {
+    updatedHtml = message.content[0].text.trim();
   }
 
   if (!updatedHtml.startsWith("<")) {
