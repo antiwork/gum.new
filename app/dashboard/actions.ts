@@ -45,19 +45,20 @@ export async function getGumCreationStats(): Promise<GumStat[]> {
 }
 
 export async function getGumViewStats(): Promise<GumViewStat[]> {
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+  const start = new Date();
+  start.setHours(0, 0, 0, 0);
+  start.setDate(start.getDate() - 6);
 
   try {
     const stats = await db
       .select({
-        date: sql<string>`to_char(DATE("timestamp"), 'Mon DD')`,
-        views: sql<number>`count(*)`,
+        date: sql<string>`to_char(date_trunc('day', "timestamp"), 'Mon DD')`,
+        views: sql<number>`cast(count(*) as integer)`,
       })
       .from(gumViews)
-      .where(sql`DATE("timestamp") >= ${sevenDaysAgo}`)
-      .groupBy(sql`DATE("timestamp")`)
-      .orderBy(sql`DATE("timestamp")`);
+      .where(sql`"timestamp" >= ${start}`)
+      .groupBy(sql`date_trunc('day', "timestamp")`)
+      .orderBy(sql`date_trunc('day', "timestamp")`);
 
     return stats;
   } catch (error) {
@@ -89,8 +90,12 @@ export async function getWeeklyGumViewStats(): Promise<WeeklyGumViewStat[]> {
   try {
     const stats = await db
       .select({
-        week: sql<string>`to_char(date_trunc('week', "timestamp"), 'Mon DD') || ' - ' || to_char(date_trunc('week', "timestamp") + interval '6 days', 'Mon DD')`,
-        views: sql<number>`count(*)`,
+        week: sql<string>`
+          to_char(date_trunc('week', "timestamp"), 'Mon DD')
+          || ' - ' ||
+          to_char(date_trunc('week', "timestamp") + interval '6 days', 'Mon DD')
+        `,
+        views: sql<number>`cast(count(*) as integer)`,
       })
       .from(gumViews)
       .groupBy(sql`date_trunc('week', "timestamp")`)

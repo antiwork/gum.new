@@ -6,10 +6,10 @@ export async function trackGumView(gumId: string, userId?: string, ip?: string, 
   try {
     await db.insert(gumViews).values({
       gumId: gumId,
-      userId: userId || null,
+      userId: userId ?? null,
       timestamp: new Date(),
-      ip: ip || null,
-      userAgent: userAgent || null,
+      ip: ip ?? null,
+      userAgent: userAgent ?? null,
     });
   } catch (error) {
     console.error("Error tracking gum view:", error);
