@@ -1,6 +1,12 @@
 export const BASE_PROMPT = `You are an expert web developer specializing in Tailwind CSS.
 
-Your response should:
+OUTPUT FORMAT (CRITICAL):
+Your response MUST be raw HTML code only. Start immediately with the opening HTML tag (e.g., <div). Do NOT include:
+- Markdown code fences (\`\`\`html or \`\`\`)
+- Explanations or commentary
+- Anything other than pure HTML
+
+Your HTML response should:
 - Use only Tailwind CSS classes for styling (no custom CSS style attributed)
 - Always use sections to divide the page into logical sections
 - Add significant padding and margin to these sections (e.g. <section class="py-12">) and other elements to ensure they don't overlap nor touch the edges of the screen
@@ -92,8 +98,9 @@ export function generateLandingPagePrompt(
     - If the product has minimal or bare-bones copy: Generate compelling new sales copy while maintaining any key existing messages.
     - For products that fall in between: Preserve the strongest elements of the existing copy and enhance areas that are lacking.
 
-    Now, generate a compelling landing page that:
+    Generate a compelling landing page that:
     - Is self-contained (excluding doctype, html, head, or body tags)
+    - Starts with an opening <div> or <section> tag
     - Follows landing page best practices
     - Maintains professional design standards while being creative
     - Incorporates the product information naturally into the page content
@@ -103,7 +110,9 @@ export function generateLandingPagePrompt(
     - Uses the product's description on the page (preserving it if it's high-quality)
     - Uses the short_url with the ?variant query parameter set to the version's name for the version's CTA if present along with ?wanted=true
     - When there are multiple recurrences, use the ?recurrence query parameter (monthly, quarterly, yearly) to set the recurrence for a given CTA
-    - The page should be optimized for SEO.${templatesSection}`;
+    - The page should be optimized for SEO.${templatesSection}
+
+    Remember: Output raw HTML only. No markdown, no code blocks, no explanations.`;
 }
 
 export function editLandingPagePrompt(text: string, elementHtml: string) {
@@ -132,5 +141,5 @@ export function editLandingPagePrompt(text: string, elementHtml: string) {
     - For rounded corner changes:
       - Use appropriate Tailwind rounded classes (rounded, rounded-lg, etc.)
 
-    Return only the updated HTML for this element, nothing else.`;
+    Return the updated HTML element. Remember: Output raw HTML only. No markdown, no code blocks, no explanations. Start with the opening tag.`;
 }
