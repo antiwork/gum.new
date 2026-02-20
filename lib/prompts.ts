@@ -73,7 +73,7 @@ export function generateLandingPagePrompt(
 
   return `${BASE_PROMPT}${colorGuidance}
 
-    You are using the Claude 3.7 Sonnet model, which excels at analyzing content and making intelligent decisions about how to present information.
+    You are using the Claude Opus 4.6 model, which excels at analyzing content and making intelligent decisions about how to present information.
 
     First, analyze the existing product data to determine if it already contains high-quality sales copy:
     "${purpose}"
